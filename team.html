@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body class="team-page">
   <header class="site-header">
     <div class="container">
       <a href="index.html" class="logo">Flow<span>Ring</span></a>
@@ -46,48 +46,15 @@
   <main class="page-enter">
     <section class="page-hero">
       <div class="container">
-        <h1 class="section-title">Our Team</h1>
-        <p class="subtitle">The people behind FlowRing — dedicated to making smart water conservation accessible to everyone.</p>
+        <h1 class="section-title" data-content-key="team.title">Our Team</h1>
+        <p class="subtitle" data-content-key="team.subtitle">The people behind FlowRing — dedicated to making smart water conservation accessible to everyone.</p>
       </div>
     </section>
 
     <section class="section">
       <div class="container">
-        <div class="team-grid">
-          <article class="team-card">
-            <div class="team-card__avatar" aria-hidden="true">
-              <span class="team-card__initials">JD</span>
-            </div>
-            <h3 class="team-card__name">Jordan Davis</h3>
-            <p class="team-card__role">CEO & Co-Founder</p>
-            <p class="team-card__bio">Leads product vision and strategy. Former water infrastructure researcher.</p>
-          </article>
-          <article class="team-card">
-            <div class="team-card__avatar" aria-hidden="true">
-              <span class="team-card__initials">MK</span>
-            </div>
-            <h3 class="team-card__name">Maya Kim</h3>
-            <p class="team-card__role">CTO & Co-Founder</p>
-            <p class="team-card__bio">Hardware and ML. Built sensing systems for environmental monitoring.</p>
-          </article>
-          <article class="team-card">
-            <div class="team-card__avatar" aria-hidden="true">
-              <span class="team-card__initials">AR</span>
-            </div>
-            <h3 class="team-card__name">Alex Rivera</h3>
-            <p class="team-card__role">Head of Product</p>
-            <p class="team-card__bio">User experience and accessibility. Ensures FlowRing works for every home.</p>
-          </article>
-          <article class="team-card">
-            <div class="team-card__avatar" aria-hidden="true">
-              <span class="team-card__initials">SC</span>
-            </div>
-            <h3 class="team-card__name">Sam Chen</h3>
-            <p class="team-card__role">Head of Engineering</p>
-            <p class="team-card__bio">Firmware and edge AI. Makes the device reliable and privacy-first.</p>
-          </article>
-        </div>
-        <p class="section-note team-cta">We’re a small team focused on real impact. <a href="about.html">Learn more about FlowRing</a> or <a href="pricing.html">get your device</a>.</p>
+        <div id="team-grid" class="team-grid" aria-live="polite"></div>
+        <p class="section-note team-cta" data-content-key="team.cta">We’re a small team focused on real impact. <a href="about.html">Learn more about FlowRing</a> or <a href="pricing.html">get your device</a>.</p>
       </div>
     </section>
   </main>
@@ -126,6 +93,7 @@
   </footer>
   <script src="js/main.js"></script>
   <script src="js/content-loader.js"></script>
+  <script src="js/team.js"></script>
   <script src="js/account-header.js"></script>
 </body>
 </html>

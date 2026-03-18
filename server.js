@@ -22,6 +22,16 @@ db.exec(`
     value TEXT NOT NULL DEFAULT '',
     type TEXT NOT NULL DEFAULT 'text'
   );
+  CREATE TABLE IF NOT EXISTS team_members (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT '',
+    bio TEXT NOT NULL DEFAULT '',
+    initials TEXT NOT NULL DEFAULT '',
+    photo_url TEXT NOT NULL DEFAULT '',
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
   CREATE TABLE IF NOT EXISTS posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -60,10 +70,92 @@ const defaultContent = [
   { key: 'why.subtitle', value: 'They monitor. FlowRing prevents.', type: 'text' },
   { key: 'impact.title', value: 'Real Impact', type: 'text' },
   { key: 'impact.subtitle', value: 'Reducing faucet waste means lower bills, less energy, and a smaller environmental footprint.', type: 'text' },
+  { key: 'about.title', value: 'Our mission: prevent water waste before it happens.', type: 'text' },
+  { key: 'about.subtitle', value: 'FlowRing exists to make everyday conservation effortless, starting at the tap.', type: 'text' },
+  { key: 'about.stat.title', value: 'Water stress is accelerating.', type: 'text' },
+  { key: 'about.stat.text', value: 'By 2050, roughly <strong>half of the world’s population</strong> is projected to live in water‑stressed areas.', type: 'text' },
+  { key: 'about.lead', value: 'FlowRing started with a simple question: <strong>what if the easiest place to save water is at the exact moment we turn on the tap?</strong>', type: 'text' },
+  { key: 'team.title', value: 'Our Team', type: 'text' },
+  { key: 'team.subtitle', value: 'The people behind FlowRing — dedicated to making smart water conservation accessible to everyone.', type: 'text' },
+  { key: 'team.1.initials', value: 'RR', type: 'text' },
+  { key: 'team.1.name', value: 'Rishventh Ramoshan', type: 'text' },
+  { key: 'team.1.role', value: 'Founder', type: 'text' },
+  { key: 'team.1.bio', value: 'Building FlowRing — smart, simple water conservation for everyone.', type: 'text' },
+  { key: 'team.cta', value: 'We’re a small team focused on real impact. <a href="about.html">Learn more about FlowRing</a> or <a href="pricing.html">get your device</a>.', type: 'text' },
+  { key: 'gallery.title', value: 'Gallery', type: 'text' },
+  { key: 'gallery.subtitle', value: 'FlowRing in the wild — product, installation, and everyday use.', type: 'text' },
+  // Gallery images are intentionally blank until real photos are ready
+  { key: 'gallery.image.1', value: '', type: 'image' },
+  { key: 'gallery.caption.1', value: 'Coming soon.', type: 'text' },
+  { key: 'gallery.image.2', value: '', type: 'image' },
+  { key: 'gallery.caption.2', value: 'Coming soon.', type: 'text' },
+  { key: 'gallery.image.3', value: '', type: 'image' },
+  { key: 'gallery.caption.3', value: 'Coming soon.', type: 'text' },
+  { key: 'gallery.image.4', value: '', type: 'image' },
+  { key: 'gallery.caption.4', value: 'Coming soon.', type: 'text' },
+  { key: 'gallery.image.5', value: '', type: 'image' },
+  { key: 'gallery.caption.5', value: 'Coming soon.', type: 'text' },
+  { key: 'gallery.image.6', value: '', type: 'image' },
+  { key: 'gallery.caption.6', value: 'Coming soon.', type: 'text' },
+  { key: 'blogs.title', value: 'Blog', type: 'text' },
+  { key: 'blogs.subtitle', value: 'Updates, tips, and stories from the FlowRing team.', type: 'text' },
+  { key: 'reviews.title', value: 'Reviews', type: 'text' },
+  { key: 'reviews.subtitle', value: 'What experts and users say about FlowRing.', type: 'text' },
+  { key: 'reviews.quote', value: '"Impressed by what I saw in FlowRing. Such a simple yet scalable innovation can give a significant reduction in water waste in water-stressed regions globally!"', type: 'text' },
+  { key: 'reviews.author', value: 'Professor Emeritus Naradarajah Sriskandarajah', type: 'text' },
+  { key: 'reviews.meta', value: 'Swedish University of Agricultural Sciences', type: 'text' },
+  { key: 'pricing.title', value: 'Pricing', type: 'text' },
+  { key: 'pricing.subtitle', value: 'Affordable, accessible water conservation. No subscription — just attach and save.', type: 'text' },
+  { key: 'pricing.single.title', value: 'FlowRing Single', type: 'text' },
+  { key: 'pricing.single.desc', value: 'One device for one faucet. Perfect to try FlowRing or cover your most-used tap.', type: 'text' },
+  { key: 'pricing.single.amount', value: '$19.99', type: 'text' },
+  { key: 'pricing.single.unit', value: 'one-time', type: 'text' },
+  { key: 'pricing.single.features', value: '<li>1× FlowRing device</li><li>Clip-on installation</li><li>AI learning & LED feedback</li><li>No app or subscription</li>', type: 'text' },
+  { key: 'pricing.pack3.badge', value: 'Best value', type: 'text' },
+  { key: 'pricing.pack3.title', value: 'FlowRing 3-Pack', type: 'text' },
+  { key: 'pricing.pack3.desc', value: 'Kitchen + two bathrooms, or share with family. Save more, waste less.', type: 'text' },
+  { key: 'pricing.pack3.amount', value: '$59.99', type: 'text' },
+  { key: 'pricing.pack3.unit', value: 'one-time', type: 'text' },
+  { key: 'pricing.pack3.features', value: '<li>3× FlowRing devices</li><li>Clip-on installation</li><li>AI learning & LED feedback</li><li>No app or subscription</li>', type: 'text' },
+  { key: 'pricing.note', value: 'Free shipping on orders over $75. No plumbing, no professional installation. Works on standard faucets.', type: 'text' },
+  { key: 'account.title', value: 'Account', type: 'text' },
+  { key: 'account.subtitle', value: 'Log in or create an account to browse as a customer and manage your cart.', type: 'text' },
+  { key: 'account.intro', value: 'Log in or create an account to manage your profile, view order history, and save items to your cart.', type: 'text' },
   { key: 'footer.copyright', value: '© FlowRing. flowring.shop — Preserving Every Drop Smarter.', type: 'text' },
 ];
 const insertBlock = db.prepare('INSERT OR IGNORE INTO content_blocks (key, value, type) VALUES (?, ?, ?)');
 defaultContent.forEach(({ key, value, type }) => insertBlock.run(key, value, type));
+
+// One-time-ish migrations for existing DB content values
+// (content-loader pulls from DB and will override HTML defaults)
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ? AND value = ?").run('$19.99', 'pricing.single.amount', '$49');
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ? AND value = ?").run('$59.99', 'pricing.pack3.amount', '$119');
+db.prepare("DELETE FROM content_blocks WHERE key = ?").run('pricing.pack3.savings');
+
+// Seed team members (only if empty)
+// Lightweight migration for older DBs (add missing photo_url column)
+try {
+  db.prepare('SELECT photo_url FROM team_members LIMIT 1').get();
+} catch (e) {
+  try { db.prepare("ALTER TABLE team_members ADD COLUMN photo_url TEXT NOT NULL DEFAULT ''").run(); } catch (_) {}
+}
+
+const teamCount = db.prepare('SELECT COUNT(*) AS c FROM team_members').get().c;
+if (!teamCount) {
+  db.prepare('INSERT INTO team_members (name, role, bio, initials, photo_url, sort_order) VALUES (?, ?, ?, ?, ?, ?)').run(
+    'Rishventh Ramoshan',
+    'Founder',
+    'Building FlowRing — smart, simple water conservation for everyone.',
+    'RR',
+    'images/rishventh-profile.png',
+    10
+  );
+} else {
+  // Ensure the primary profile has a photo
+  db.prepare("UPDATE team_members SET photo_url = COALESCE(photo_url, '') WHERE photo_url IS NULL").run();
+  db.prepare("UPDATE team_members SET photo_url = ? WHERE LOWER(name) = LOWER(?) AND (photo_url = '' OR photo_url IS NULL)")
+    .run('images/rishventh-profile.png', 'Rishventh Ramoshan');
+}
 
 app.use(express.json({ limit: '1mb' }));
 app.use(session({
@@ -96,6 +188,12 @@ app.get('/api/content', (req, res) => {
   const content = {};
   rows.forEach(r => { content[r.key] = { value: r.value, type: r.type }; });
   res.json(content);
+});
+
+// Team (public)
+app.get('/api/team', (req, res) => {
+  const members = db.prepare('SELECT id, name, role, bio, initials, photo_url FROM team_members ORDER BY sort_order ASC, id ASC').all();
+  res.json({ members });
 });
 
 app.get('/api/posts', (req, res) => {
@@ -131,6 +229,60 @@ app.post('/api/logout', (req, res) => {
 
 app.get('/api/admin/me', (req, res) => {
   res.json({ admin: isAdmin(req) });
+});
+
+// Team (admin)
+app.get('/api/admin/team', (req, res) => {
+  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+  const members = db.prepare('SELECT id, name, role, bio, initials, photo_url, sort_order FROM team_members ORDER BY sort_order ASC, id ASC').all();
+  res.json({ members });
+});
+
+app.post('/api/admin/team', (req, res) => {
+  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+  const body = req.body && typeof req.body === 'object' ? req.body : {};
+  const name = body.name != null ? String(body.name).trim() : '';
+  const role = body.role != null ? String(body.role).trim() : '';
+  const bio = body.bio != null ? String(body.bio).trim() : '';
+  const initials = body.initials != null ? String(body.initials).trim() : '';
+  const photoUrl = body.photo_url != null ? String(body.photo_url).trim() : '';
+  const sortOrder = body.sort_order != null ? parseInt(body.sort_order, 10) : null;
+  if (!name) return res.status(400).json({ error: 'Name is required' });
+  const computedInitials = initials || name.split(/\s+/).filter(Boolean).slice(0, 2).map(s => s.charAt(0).toUpperCase()).join('');
+  const currentMax = db.prepare('SELECT COALESCE(MAX(sort_order), 0) AS m FROM team_members').get().m;
+  const finalSort = Number.isFinite(sortOrder) ? sortOrder : (currentMax + 10);
+  const result = db.prepare('INSERT INTO team_members (name, role, bio, initials, photo_url, sort_order) VALUES (?, ?, ?, ?, ?, ?)').run(
+    name, role, bio, computedInitials, photoUrl, finalSort
+  );
+  res.status(201).json({ ok: true, id: result.lastInsertRowid });
+});
+
+app.put('/api/admin/team/:id', (req, res) => {
+  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+  const id = parseInt(req.params.id, 10);
+  const row = db.prepare('SELECT id FROM team_members WHERE id = ?').get(id);
+  if (!row) return res.status(404).json({ error: 'Not found' });
+  const body = req.body && typeof req.body === 'object' ? req.body : {};
+  const name = body.name != null ? String(body.name).trim() : null;
+  const role = body.role != null ? String(body.role).trim() : null;
+  const bio = body.bio != null ? String(body.bio).trim() : null;
+  const initials = body.initials != null ? String(body.initials).trim() : null;
+  const photoUrl = body.photo_url != null ? String(body.photo_url).trim() : null;
+  const sortOrder = body.sort_order != null ? parseInt(body.sort_order, 10) : null;
+  if (name != null) db.prepare('UPDATE team_members SET name = ? WHERE id = ?').run(name, id);
+  if (role != null) db.prepare('UPDATE team_members SET role = ? WHERE id = ?').run(role, id);
+  if (bio != null) db.prepare('UPDATE team_members SET bio = ? WHERE id = ?').run(bio, id);
+  if (initials != null) db.prepare('UPDATE team_members SET initials = ? WHERE id = ?').run(initials, id);
+  if (photoUrl != null) db.prepare('UPDATE team_members SET photo_url = ? WHERE id = ?').run(photoUrl, id);
+  if (Number.isFinite(sortOrder)) db.prepare('UPDATE team_members SET sort_order = ? WHERE id = ?').run(sortOrder, id);
+  res.json({ ok: true });
+});
+
+app.delete('/api/admin/team/:id', (req, res) => {
+  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+  const id = parseInt(req.params.id, 10);
+  db.prepare('DELETE FROM team_members WHERE id = ?').run(id);
+  res.json({ ok: true });
 });
 
 // ——— Customer account ———

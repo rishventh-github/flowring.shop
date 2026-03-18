@@ -9,34 +9,45 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600&family=Sora:wght@600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <style>
-    .admin { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem; }
-    .admin__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .admin { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem; }
+    .admin__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem; }
     .admin__title { font-family: Sora, sans-serif; font-size: 1.5rem; color: #0d3b66; margin: 0; }
     .admin__out { color: #1a6fa8; font-weight: 600; text-decoration: none; }
     .admin__out:hover { text-decoration: underline; }
-    .admin__section { margin-bottom: 2.5rem; }
-    .admin__section h2 { font-family: Sora, sans-serif; font-size: 1.25rem; color: #0d3b66; margin: 0 0 1rem; }
-    .admin-table { width: 100%; border-collapse: collapse; }
-    .admin-table th, .admin-table td { padding: 0.5rem 0.75rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
-    .admin-table th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; }
+    .admin-tabs {
+      display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1.5rem;
+      border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;
+    }
+    .admin-tab {
+      padding: 0.5rem 0.9rem; border: none; background: #f1f5f9; color: #475569;
+      font-weight: 600; font-size: 0.875rem; border-radius: 8px 8px 0 0; cursor: pointer;
+      font-family: inherit;
+    }
+    .admin-tab:hover { background: #e2e8f0; color: #0d3b66; }
+    .admin-tab.is-active { background: #0d3b66; color: white; }
+    .admin-tab-panel { display: none; }
+    .admin-tab-panel.is-active { display: block; }
+    .admin-tab-panel > p.help { font-size: 0.875rem; color: #64748b; margin: 0 0 1rem; }
+    .admin-section { margin-bottom: 2rem; }
+    .admin-section h3 { font-family: Sora, sans-serif; font-size: 1.05rem; color: #0d3b66; margin: 0 0 0.75rem; }
     .admin-form { display: grid; gap: 0.75rem; margin-bottom: 1rem; }
     .admin-form label { font-size: 0.875rem; font-weight: 600; }
     .admin-form input, .admin-form select, .admin-form textarea { padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9375rem; font-family: inherit; }
-    .admin-form textarea { min-height: 100px; resize: vertical; }
-    .admin-form .row { display: flex; gap: 0.5rem; align-items: center; }
+    .admin-form textarea { min-height: 80px; resize: vertical; }
     .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8125rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
     .btn-save { background: #1a6fa8; color: white; }
-    .btn-edit { background: #e0f2fe; color: #0d3b66; }
-    .btn-del { background: #fef2f2; color: #dc2626; }
-    .btn-new { background: #0d3b66; color: white; margin-bottom: 1rem; }
-    .content-block { background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 0.75rem; }
-    .content-block__key { font-weight: 600; color: #0d3b66; margin-bottom: 0.35rem; }
+    .btn-edit { background: #e0f2fe; color: #0d3b66; text-decoration: none; display: inline-block; }
+    .btn-new { background: #0d3b66; color: white; margin-bottom: 1rem; text-decoration: none; display: inline-block; }
+    .content-block { background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 0.75rem; border: 1px solid #e2e8f0; }
+    .content-block__key { font-weight: 600; color: #0d3b66; margin-bottom: 0.35rem; font-size: 0.8125rem; }
+    .content-block__hint { font-size: 0.75rem; color: #64748b; margin-bottom: 0.35rem; }
     .content-block__input { width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 0.35rem; font-family: inherit; box-sizing: border-box; }
-    .content-block__input.textarea { min-height: 60px; resize: vertical; }
+    .content-block__input.textarea { min-height: 72px; resize: vertical; }
     .post-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 0.5rem; }
     .post-row a { color: #1a6fa8; }
     .post-draft { font-size: 0.75rem; background: #fef3c7; color: #92400e; padding: 0.2rem 0.5rem; border-radius: 4px; }
     #admin-gate { text-align: center; padding: 3rem 1rem; }
+    .admin-empty { color: #64748b; font-size: 0.9375rem; padding: 1rem 0; }
   </style>
 </head>
 <body>
@@ -52,61 +63,366 @@
       </div>
     </header>
 
-    <section class="admin__section">
-      <h2>Edit site content</h2>
-      <p style="font-size:0.875rem;color:#64748b;margin-bottom:1rem;">Text with <code>data-content-key</code> on the site is loaded from here. Change a value and click Save; it will appear for all visitors.</p>
-      <div id="content-blocks"></div>
-    </section>
+    <nav class="admin-tabs" role="tablist" aria-label="Page sections"></nav>
 
-    <section class="admin__section">
-      <h2>Add content block</h2>
-      <div class="admin-form">
-        <label>Key (e.g. hero.title)</label>
-        <input type="text" id="new-block-key" placeholder="hero.title">
-        <label>Type</label>
-        <select id="new-block-type">
-          <option value="text">Text (HTML allowed)</option>
-          <option value="image">Image URL</option>
-        </select>
-        <label>Value</label>
-        <input type="text" id="new-block-value" placeholder="Your text or image URL">
-        <button type="button" id="btn-add-block" class="btn-sm btn-save">Add block</button>
+    <div id="tab-panel-home" class="admin-tab-panel" data-tab-panel="home">
+      <p class="help">Edits apply to the <strong>Home</strong> page (hero, how it works, why us, impact).</p>
+      <div class="tab-blocks" data-tab-blocks="home"></div>
+    </div>
+    <div id="tab-panel-about" class="admin-tab-panel" data-tab-panel="about">
+      <p class="help">Edits apply to the <strong>About</strong> page.</p>
+      <div class="tab-blocks" data-tab-blocks="about"></div>
+    </div>
+    <div id="tab-panel-team" class="admin-tab-panel" data-tab-panel="team">
+      <p class="help">Edits apply to the <strong>Team</strong> page.</p>
+      <div class="admin-section">
+        <h3>Team members</h3>
+        <div class="admin-form" style="grid-template-columns: 1fr 1fr; column-gap: 0.75rem;">
+          <div>
+            <label for="team-name">Name</label>
+            <input id="team-name" type="text" placeholder="Rishventh Ramoshan">
+          </div>
+          <div>
+            <label for="team-role">Role</label>
+            <input id="team-role" type="text" placeholder="Founder">
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <label for="team-bio">Bio</label>
+            <textarea id="team-bio" placeholder="Short bio"></textarea>
+          </div>
+          <div>
+            <label for="team-initials">Initials (optional)</label>
+            <input id="team-initials" type="text" placeholder="RR">
+          </div>
+          <div>
+            <label for="team-sort">Order (optional)</label>
+            <input id="team-sort" type="number" placeholder="10">
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <label for="team-photo">Photo URL (optional)</label>
+            <input id="team-photo" type="text" placeholder="images/rishventh-profile.png">
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+              <button type="button" id="btn-team-add" class="btn-sm btn-save">Add team member</button>
+              <button type="button" id="btn-team-cancel" class="btn-sm" style="display:none;background:#e2e8f0;color:#0f172a;">Cancel edit</button>
+            </div>
+          </div>
+        </div>
+        <div id="team-members-list"></div>
       </div>
-    </section>
-
-    <section class="admin__section">
-      <h2>Blog posts</h2>
-      <a href="/admin/post.html" class="btn-sm btn-new">New post</a>
-      <div id="posts-list"></div>
-    </section>
+      <div class="tab-blocks" data-tab-blocks="team"></div>
+    </div>
+    <div id="tab-panel-gallery" class="admin-tab-panel" data-tab-panel="gallery">
+      <p class="help">Gallery image URLs and captions. Image fields expect a full URL.</p>
+      <div class="tab-blocks" data-tab-blocks="gallery"></div>
+    </div>
+    <div id="tab-panel-blog" class="admin-tab-panel" data-tab-panel="blog">
+      <p class="help">Blog listing headline and posts (create or edit posts below).</p>
+      <div class="tab-blocks" data-tab-blocks="blog"></div>
+      <div class="admin-section">
+        <h3>Blog posts</h3>
+        <a href="/admin/post.html" class="btn-sm btn-new">New post</a>
+        <div id="posts-list"></div>
+      </div>
+    </div>
+    <div id="tab-panel-reviews" class="admin-tab-panel" data-tab-panel="reviews">
+      <p class="help">Edits apply to the <strong>Reviews</strong> page.</p>
+      <div class="tab-blocks" data-tab-blocks="reviews"></div>
+    </div>
+    <div id="tab-panel-pricing" class="admin-tab-panel" data-tab-panel="pricing">
+      <p class="help">Pricing cards: feature lists use HTML, e.g. <code>&lt;li&gt;…&lt;/li&gt;</code> inside the list field.</p>
+      <div class="tab-blocks" data-tab-blocks="pricing"></div>
+    </div>
+    <div id="tab-panel-account" class="admin-tab-panel" data-tab-panel="account">
+      <p class="help">Edits apply to the <strong>Account</strong> page (login / sign up).</p>
+      <div class="tab-blocks" data-tab-blocks="account"></div>
+    </div>
+    <div id="tab-panel-site" class="admin-tab-panel" data-tab-panel="site">
+      <p class="help">Footer and any custom keys. Add new keys for experiments or future pages.</p>
+      <div class="admin-section">
+        <h3>Add content block</h3>
+        <div class="admin-form">
+          <label for="new-block-key">Key (e.g. hero.title)</label>
+          <input type="text" id="new-block-key" placeholder="section.field">
+          <label for="new-block-type">Type</label>
+          <select id="new-block-type">
+            <option value="text">Text (HTML allowed)</option>
+            <option value="image">Image URL</option>
+          </select>
+          <label for="new-block-value">Value</label>
+          <input type="text" id="new-block-value" placeholder="Text or image URL">
+          <button type="button" id="btn-add-block" class="btn-sm btn-save">Add block</button>
+        </div>
+      </div>
+      <div class="tab-blocks" data-tab-blocks="site"></div>
+    </div>
   </div>
 
   <script>
     var API = '/api';
     var isDirty = false;
 
-    function setDirty(dirty) {
-      isDirty = !!dirty;
+    var TAB_ORDER = [
+      { id: 'home', label: 'Home' },
+      { id: 'about', label: 'About' },
+      { id: 'team', label: 'Team' },
+      { id: 'gallery', label: 'Gallery' },
+      { id: 'blog', label: 'Blog' },
+      { id: 'reviews', label: 'Reviews' },
+      { id: 'pricing', label: 'Pricing' },
+      { id: 'account', label: 'Account' },
+      { id: 'site', label: 'Site-wide' }
+    ];
+
+    function tabForKey(key) {
+      if (/^(hero|howitworks|why|impact)\./.test(key)) return 'home';
+      if (key.indexOf('about.') === 0) return 'about';
+      // Team members are managed via the Team Members UI (not content keys like team.1.*)
+      if (key.indexOf('team.') === 0) return 'team';
+      if (key.indexOf('gallery.') === 0) return 'gallery';
+      if (key.indexOf('blogs.') === 0) return 'blog';
+      if (key.indexOf('reviews.') === 0) return 'reviews';
+      if (key.indexOf('pricing.') === 0) return 'pricing';
+      if (key.indexOf('account.') === 0) return 'account';
+      return 'site';
     }
 
+    function setDirty(dirty) { isDirty = !!dirty; }
     function confirmLeaveIfDirty() {
       if (!isDirty) return true;
       return window.confirm('You have unsaved changes. Save before leaving this page?');
     }
-
     window.addEventListener('beforeunload', function (e) {
       if (!isDirty) return;
       e.preventDefault();
       e.returnValue = '';
     });
 
+    function escapeHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    function escapeAttr(s) { return String(s).replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+
+    function blockLabel(key) {
+      var map = {
+        'hero.tagline': 'Hero — tagline (small line above title)',
+        'hero.title': 'Hero — main headline (HTML OK, e.g. &lt;br&gt;)',
+        'hero.lead': 'Hero — lead paragraph',
+        'howitworks.title': 'How it works — section title',
+        'howitworks.subtitle': 'How it works — subtitle',
+        'why.title': 'Why different — title',
+        'why.subtitle': 'Why different — subtitle',
+        'impact.title': 'Impact — title',
+        'impact.subtitle': 'Impact — subtitle',
+        'gallery.image.1': 'Image 1 — URL', 'gallery.caption.1': 'Image 1 — caption',
+        'gallery.image.2': 'Image 2 — URL', 'gallery.caption.2': 'Image 2 — caption',
+        'gallery.image.3': 'Image 3 — URL', 'gallery.caption.3': 'Image 3 — caption',
+        'gallery.image.4': 'Image 4 — URL', 'gallery.caption.4': 'Image 4 — caption',
+        'gallery.image.5': 'Image 5 — URL', 'gallery.caption.5': 'Image 5 — caption',
+        'gallery.image.6': 'Image 6 — URL', 'gallery.caption.6': 'Image 6 — caption',
+        'pricing.single.features': 'Single — feature list (HTML &lt;li&gt;…&lt;/li&gt;)',
+        'pricing.pack3.features': '3-Pack — feature list (HTML)',
+        'pricing.pack6.features': '6-Pack — feature list (HTML)'
+      };
+      return map[key] || key.replace(/\./g, ' — ');
+    }
+
+    function renderBlockRow(row) {
+      var isTextarea = row.type === 'text' && ((row.value || '').length > 100 || (row.value || '').indexOf('\n') >= 0 || /\.features$/.test(row.key));
+      var isImage = row.type === 'image';
+      var hint = isImage ? 'Full image URL' : (row.type === 'text' && /\.features$/.test(row.key) ? 'Paste &lt;li&gt;…&lt;/li&gt; lines only' : '');
+      var inputTag = isTextarea ? 'textarea' : 'input';
+      var inputOpen = isTextarea
+        ? '<textarea class="content-block__input textarea" data-key="' + escapeAttr(row.key) + '">' + escapeHtml(row.value || '') + '</textarea>'
+        : '<input type="text" class="content-block__input" data-key="' + escapeAttr(row.key) + '" value="' + escapeAttr(row.value || '') + '">';
+      return '<div class="content-block" data-key="' + escapeAttr(row.key) + '" data-type="' + escapeAttr(row.type) + '">' +
+        '<div class="content-block__key">' + escapeHtml(blockLabel(row.key)) + '</div>' +
+        (hint ? '<div class="content-block__hint">' + hint + '</div>' : '') +
+        '<div style="font-size:0.7rem;color:#94a3b8;">' + escapeHtml(row.key) + '</div>' +
+        inputOpen +
+        '<button type="button" class="btn-sm btn-save" style="margin-top:0.5rem" data-save-key="' + escapeAttr(row.key) + '">Save</button></div>';
+    }
+
+    function wireSaveButtons(root) {
+      root.querySelectorAll('[data-save-key]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var key = btn.getAttribute('data-save-key');
+          var el = root.querySelector('.content-block__input[data-key="' + escapeAttr(key) + '"]');
+          var block = root.querySelector('.content-block[data-key="' + escapeAttr(key) + '"]');
+          var type = (block && block.getAttribute('data-type')) || 'text';
+          var value = el ? (el.tagName === 'TEXTAREA' ? el.value : el.value) : '';
+          fetch(API + '/admin/content', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ key: key, value: value, type: type })
+          }).then(function (r) {
+            if (r.ok) { alert('Saved.'); setDirty(false); }
+          });
+        });
+      });
+    }
+
     function bindDirtyTracking() {
-      // Any edits to content block inputs mark the page dirty
       document.querySelectorAll('.content-block__input, #new-block-key, #new-block-type, #new-block-value').forEach(function (el) {
         if (!el) return;
         el.addEventListener('input', function () { setDirty(true); });
         el.addEventListener('change', function () { setDirty(true); });
       });
+    }
+
+    function sortRowsForTab(rows, tabId) {
+      var filtered = rows
+        .filter(function (r) { return tabForKey(r.key) === tabId; })
+        // Hide deprecated static team member keys (team.1.*, team.2.*...) from the UI
+        .filter(function (r) { return !/^team\.\d+\./.test(r.key); });
+      filtered.sort(function (a, b) { return a.key.localeCompare(b.key); });
+      return filtered;
+    }
+
+    function loadContent() {
+      fetch(API + '/admin/content', { credentials: 'include' }).then(function (r) { return r.json(); }).then(function (rows) {
+        TAB_ORDER.forEach(function (tab) {
+          var container = document.querySelector('[data-tab-blocks="' + tab.id + '"]');
+          if (!container) return;
+          var list = sortRowsForTab(rows, tab.id);
+          if (!list.length) {
+            container.innerHTML = '<p class="admin-empty">No editable fields in this section yet.</p>';
+            return;
+          }
+          container.innerHTML = list.map(renderBlockRow).join('');
+          wireSaveButtons(container);
+        });
+        bindDirtyTracking();
+      });
+    }
+
+    function loadPosts() {
+      fetch(API + '/posts', { credentials: 'include' }).then(function (r) { return r.json(); }).then(function (posts) {
+        var el = document.getElementById('posts-list');
+        if (!el) return;
+        var html = posts.map(function (p) {
+          return '<div class="post-row">' +
+            '<div><a href="/blog-post.html?slug=' + encodeURIComponent(p.slug) + '" target="_blank">' + escapeHtml(p.title) + '</a> ' +
+            (p.published ? '' : '<span class="post-draft">Draft</span>') + '</div>' +
+            '<div><a href="/admin/post.html?id=' + p.id + '" class="btn-sm btn-edit">Edit</a></div></div>';
+        }).join('');
+        el.innerHTML = html || '<p class="admin-empty">No posts yet.</p>';
+      });
+    }
+
+    // --- Team members (DB-backed) ---
+    var teamEditingId = null;
+
+    function resetTeamForm() {
+      teamEditingId = null;
+      var nameEl = document.getElementById('team-name');
+      var roleEl = document.getElementById('team-role');
+      var bioEl = document.getElementById('team-bio');
+      var initEl = document.getElementById('team-initials');
+      var sortEl = document.getElementById('team-sort');
+      var photoEl = document.getElementById('team-photo');
+      if (nameEl) nameEl.value = '';
+      if (roleEl) roleEl.value = '';
+      if (bioEl) bioEl.value = '';
+      if (initEl) initEl.value = '';
+      if (sortEl) sortEl.value = '';
+      if (photoEl) photoEl.value = '';
+      var btn = document.getElementById('btn-team-add');
+      if (btn) btn.textContent = 'Add team member';
+      var cancel = document.getElementById('btn-team-cancel');
+      if (cancel) cancel.style.display = 'none';
+    }
+
+    function loadTeamMembers() {
+      var listEl = document.getElementById('team-members-list');
+      if (!listEl) return;
+      fetch(API + '/admin/team', { credentials: 'include' })
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+        .then(function (data) {
+          var members = (data && data.members) ? data.members : [];
+          if (!members.length) {
+            listEl.innerHTML = '<p class="admin-empty">No team members yet.</p>';
+            return;
+          }
+          listEl.innerHTML = members.map(function (m) {
+            var photo = (m.photo_url || '').trim();
+            return (
+              '<div class="content-block" data-team-id="' + m.id + '">' +
+                '<div class="content-block__key" style="display:flex;align-items:center;gap:0.6rem;">' +
+                  (photo ? '<img src="' + escapeAttr(photo) + '" alt="" style="width:36px;height:36px;border-radius:9999px;object-fit:cover;border:1px solid #e2e8f0;">' : '') +
+                  '<span>' + escapeHtml(m.name) + (m.role ? ' — ' + escapeHtml(m.role) : '') + '</span>' +
+                '</div>' +
+                '<div style="font-size:0.75rem;color:#64748b;margin-top:0.35rem;">Order: ' + escapeHtml(String(m.sort_order)) + '</div>' +
+                '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.6rem;">' +
+                  '<button type="button" class="btn-sm btn-edit" data-team-edit="' + m.id + '">Edit</button>' +
+                  '<button type="button" class="btn-sm" style="background:#fef2f2;color:#dc2626;" data-team-del="' + m.id + '">Remove</button>' +
+                '</div>' +
+              '</div>'
+            );
+          }).join('');
+
+          listEl.querySelectorAll('[data-team-del]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              var id = btn.getAttribute('data-team-del');
+              if (!confirm('Remove this team member?')) return;
+              fetch(API + '/admin/team/' + id, { method: 'DELETE', credentials: 'include' })
+                .then(function (r) { if (r.ok) { resetTeamForm(); loadTeamMembers(); } });
+            });
+          });
+
+          listEl.querySelectorAll('[data-team-edit]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              var id = btn.getAttribute('data-team-edit');
+              var m = members.find(function (x) { return String(x.id) === String(id); });
+              if (!m) return;
+              teamEditingId = m.id;
+              document.getElementById('team-name').value = m.name || '';
+              document.getElementById('team-role').value = m.role || '';
+              document.getElementById('team-bio').value = m.bio || '';
+              document.getElementById('team-initials').value = m.initials || '';
+              document.getElementById('team-sort').value = (m.sort_order != null ? String(m.sort_order) : '');
+              var photoEl = document.getElementById('team-photo');
+              if (photoEl) photoEl.value = m.photo_url || '';
+              var btnAdd = document.getElementById('btn-team-add');
+              if (btnAdd) btnAdd.textContent = 'Save changes';
+              var cancel = document.getElementById('btn-team-cancel');
+              if (cancel) cancel.style.display = 'inline-block';
+              activateTab('team');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+          });
+        })
+        .catch(function () {
+          listEl.innerHTML = '<p class="admin-empty">Could not load team members.</p>';
+        });
+    }
+
+    function activateTab(tabId) {
+      document.querySelectorAll('.admin-tab').forEach(function (b) {
+        b.classList.toggle('is-active', b.getAttribute('data-tab') === tabId);
+        b.setAttribute('aria-selected', b.getAttribute('data-tab') === tabId ? 'true' : 'false');
+      });
+      document.querySelectorAll('.admin-tab-panel').forEach(function (p) {
+        p.classList.toggle('is-active', p.getAttribute('data-tab-panel') === tabId);
+      });
+      if (tabId === 'blog') loadPosts();
+      if (tabId === 'team') loadTeamMembers();
+    }
+
+    function buildTabs() {
+      var nav = document.querySelector('.admin-tabs');
+      TAB_ORDER.forEach(function (t, i) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'admin-tab' + (i === 0 ? ' is-active' : '');
+        btn.setAttribute('data-tab', t.id);
+        btn.setAttribute('role', 'tab');
+        btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+        btn.textContent = t.label;
+        btn.addEventListener('click', function () { activateTab(t.id); });
+        nav.appendChild(btn);
+      });
+      document.querySelector('.admin-tab-panel[data-tab-panel="home"]').classList.add('is-active');
     }
 
     function checkAuth() {
@@ -115,10 +431,10 @@
         document.getElementById('admin-gate').style.display = 'none';
         if (data.admin) {
           document.getElementById('admin-app').style.display = 'block';
+          buildTabs();
           loadContent();
           loadPosts();
-          // bind after first render
-          setTimeout(bindDirtyTracking, 0);
+          loadTeamMembers();
         } else {
           window.location.href = '/admin/login';
         }
@@ -127,52 +443,42 @@
         window.location.href = '/admin/login';
       });
     }
-    function loadContent() {
-      fetch(API + '/admin/content', { credentials: 'include' }).then(function (r) { return r.json(); }).then(function (rows) {
-        var html = '';
-        rows.forEach(function (row) {
-          var isTextarea = (row.value || '').length > 80 || (row.value || '').indexOf('\n') >= 0;
-          html += '<div class="content-block" data-key="' + escapeAttr(row.key) + '" data-type="' + escapeAttr(row.type) + '">' +
-            '<div class="content-block__key">' + escapeHtml(row.key) + ' (' + row.type + ')</div>' +
-            '<' + (isTextarea ? 'textarea' : 'input') + ' class="content-block__input' + (isTextarea ? ' textarea' : '') + '" data-key="' + escapeAttr(row.key) + '" ' + (isTextarea ? '>' + escapeHtml(row.value || '') + '</textarea>' : ' value="' + escapeAttr(row.value || '') + '"') + '>' +
-            '<button type="button" class="btn-sm btn-save" style="margin-top:0.5rem" data-save-key="' + escapeAttr(row.key) + '">Save</button></div>';
-        });
-        document.getElementById('content-blocks').innerHTML = html || '<p>No content blocks.</p>';
-        bindDirtyTracking();
-        document.querySelectorAll('[data-save-key]').forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            var key = btn.getAttribute('data-save-key');
-            var el = document.querySelector('.content-block__input[data-key="' + escapeAttr(key) + '"]');
-            var block = document.querySelector('.content-block[data-key="' + escapeAttr(key) + '"]');
-            var type = (block && block.getAttribute('data-type')) || 'text';
-            var value = el ? (el.tagName === 'TEXTAREA' ? el.value : el.value) : '';
-            fetch(API + '/admin/content', {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              credentials: 'include',
-              body: JSON.stringify({ key: key, value: value, type: type })
-            }).then(function (r) {
-              if (r.ok) {
-                alert('Saved.');
-                setDirty(false);
-              }
-            });
-          });
-        });
+
+    // Team add/edit handlers
+    var btnTeamAdd = document.getElementById('btn-team-add');
+    if (btnTeamAdd) {
+      btnTeamAdd.addEventListener('click', function () {
+        var name = document.getElementById('team-name').value.trim();
+        var role = document.getElementById('team-role').value.trim();
+        var bio = document.getElementById('team-bio').value.trim();
+        var initials = document.getElementById('team-initials').value.trim();
+        var sortRaw = document.getElementById('team-sort').value;
+        var photoUrl = (document.getElementById('team-photo') ? document.getElementById('team-photo').value.trim() : '');
+        var sort = sortRaw !== '' ? parseInt(sortRaw, 10) : undefined;
+        if (!name) { alert('Name is required.'); return; }
+
+        var url = teamEditingId ? (API + '/admin/team/' + teamEditingId) : (API + '/admin/team');
+        var method = teamEditingId ? 'PUT' : 'POST';
+
+        fetch(url, {
+          method: method,
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ name: name, role: role, bio: bio, initials: initials, sort_order: sort, photo_url: photoUrl })
+        }).then(function (r) {
+          if (r.ok) {
+            resetTeamForm();
+            loadTeamMembers();
+          } else {
+            r.json().then(function (d) { alert((d && d.error) || 'Error saving team member.'); });
+          }
+        }).catch(function () { alert('Network error.'); });
       });
     }
-    function loadPosts() {
-      fetch(API + '/posts', { credentials: 'include' }).then(function (r) { return r.json(); }).then(function (posts) {
-        var html = posts.map(function (p) {
-          return '<div class="post-row">' +
-            '<div><a href="/blog-post.html?slug=' + encodeURIComponent(p.slug) + '" target="_blank">' + escapeHtml(p.title) + '</a> ' +
-            (p.published ? '' : '<span class="post-draft">Draft</span>') + '</div>' +
-            '<div><a href="/admin/post.html?id=' + p.id + '" class="btn-sm btn-edit">Edit</a></div>' +
-            '</div>';
-        }).join('');
-        document.getElementById('posts-list').innerHTML = html || '<p>No posts yet.</p>';
-      });
-    }
+
+    var btnTeamCancel = document.getElementById('btn-team-cancel');
+    if (btnTeamCancel) btnTeamCancel.addEventListener('click', function () { resetTeamForm(); });
+
     document.getElementById('btn-add-block').addEventListener('click', function () {
       var key = document.getElementById('new-block-key').value.trim();
       var type = document.getElementById('new-block-type').value;
@@ -189,23 +495,23 @@
           document.getElementById('new-block-value').value = '';
           setDirty(false);
           loadContent();
+          activateTab(tabForKey(key));
         }
       });
     });
+
     document.getElementById('admin-logout').addEventListener('click', function (e) {
       e.preventDefault();
       if (!confirmLeaveIfDirty()) return;
       fetch(API + '/logout', { method: 'POST', credentials: 'include' }).then(function () { window.location.href = '/admin/login'; });
     });
-    // Back-to-site link also warns if dirty
     var backLink = document.querySelector('a[href="/"]');
     if (backLink) {
       backLink.addEventListener('click', function (e) {
         if (!confirmLeaveIfDirty()) e.preventDefault();
       });
     }
-    function escapeHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-    function escapeAttr(s) { return String(s).replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+
     checkAuth();
   </script>
 </body>

@@ -31,7 +31,7 @@ Render runs your Node server, keeps SQLite data on a disk, and supports a custom
    - **Start command:** `npm start`
    - **Instance type:** Free (or paid if you need more).
 5. Under **Environment**, add:
-   - `ADMIN_PASSWORD` — pick a strong password (for `/admin/login`).
+   - `ADMIN_PASSWORD` — pick a strong password (for `/admin/login`). Gogreen1009!
    - `SESSION_SECRET` — random string (e.g. from [randomkeygen.com](https://randomkeygen.com)).
 6. Under **Disks**, add a disk:
    - Name: `flowring-data`

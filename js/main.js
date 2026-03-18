@@ -54,6 +54,9 @@
       });
     }
 
+    // Highlight current page in nav
+    setActiveNavLink();
+
     // Scroll reveal — pop up when elements enter viewport
     var revealEls = document.querySelectorAll('.scroll-reveal');
     if (revealEls.length === 0) return;
@@ -89,5 +92,48 @@
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
+  }
+
+  function normalizePathname(pathname) {
+    if (!pathname) return '/';
+    if (pathname === '/') return '/';
+    if (/\/index\.html$/.test(pathname)) return '/index.html';
+    return pathname;
+  }
+
+  function setActiveNavLink() {
+    var nav = document.querySelector('.nav-links');
+    if (!nav) return;
+
+    var current = normalizePathname(window.location.pathname);
+    var links = Array.prototype.slice.call(nav.querySelectorAll('a[href]'));
+    if (links.length === 0) return;
+
+    // Clear previous states
+    links.forEach(function (a) {
+      a.classList.remove('is-current');
+      if (a.getAttribute('aria-current') === 'page') a.removeAttribute('aria-current');
+    });
+
+    function isMatch(linkPath) {
+      var linkNormalized = normalizePathname(linkPath);
+      if (current === '/' && (linkNormalized === '/' || linkNormalized === '/index.html')) return true;
+      if (current === '/index.html' && (linkNormalized === '/' || linkNormalized === '/index.html')) return true;
+      return current === linkNormalized;
+    }
+
+    var best = null;
+    links.forEach(function (a) {
+      try {
+        var url = new URL(a.getAttribute('href'), window.location.origin);
+        if (url.origin !== window.location.origin) return;
+        if (isMatch(url.pathname)) best = a;
+      } catch (_) {}
+    });
+
+    if (best) {
+      best.classList.add('is-current');
+      best.setAttribute('aria-current', 'page');
+    }
   }
 })();

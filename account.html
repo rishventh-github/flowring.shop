@@ -80,8 +80,8 @@
   <main class="page-enter">
     <section class="page-hero">
       <div class="container">
-        <h1 class="section-title">Account</h1>
-        <p class="subtitle">Log in or create an account to browse as a customer and manage your cart.</p>
+        <h1 class="section-title" data-content-key="account.title">Account</h1>
+        <p class="subtitle" data-content-key="account.subtitle">Log in or create an account to browse as a customer and manage your cart.</p>
       </div>
     </section>
 
@@ -91,7 +91,7 @@
           <strong>Login and sign up require the FlowRing server.</strong> In the project folder run: <code>npm start</code>, then open <a href="http://localhost:3000/account.html">http://localhost:3000/account.html</a> (not another port or file).
         </div>
         <div id="account-forms" class="account-forms account-wrap" style="display: block;">
-          <p class="about-lead" style="margin-bottom: 1rem;">Log in or create an account to manage your profile, view order history, and save items to your cart.</p>
+          <p class="about-lead" style="margin-bottom: 1rem;" data-content-key="account.intro">Log in or create an account to manage your profile, view order history, and save items to your cart.</p>
           <div class="account-tabs">
             <a href="#" id="tab-login" class="active">Log in</a>
             <a href="#" id="tab-signup">Create account</a>
@@ -183,11 +183,12 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© FlowRing. flowring.shop — Preserving Every Drop Smarter.</p>
+        <p data-content-key="footer.copyright">© FlowRing. flowring.shop — Preserving Every Drop Smarter.</p>
       </div>
     </div>
   </footer>
   <script src="js/main.js"></script>
+  <script src="js/content-loader.js"></script>
   <script src="js/account.js"></script>
   <script src="js/account-header.js"></script>
 </body>

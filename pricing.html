@@ -46,8 +46,8 @@
   <main class="page-enter">
     <section class="page-hero">
       <div class="container">
-        <h1 class="section-title">Pricing</h1>
-        <p class="subtitle">Affordable, accessible water conservation. No subscription — just attach and save.</p>
+        <h1 class="section-title" data-content-key="pricing.title">Pricing</h1>
+        <p class="subtitle" data-content-key="pricing.subtitle">Affordable, accessible water conservation. No subscription — just attach and save.</p>
       </div>
     </section>
 
@@ -56,59 +56,41 @@
         <div class="pricing-grid">
           <article class="pricing-card">
             <div class="pricing-card__img pricing-card__img--single" aria-hidden="true"></div>
-            <h2 class="pricing-card__title">FlowRing Single</h2>
-            <p class="pricing-card__desc">One device for one faucet. Perfect to try FlowRing or cover your most-used tap.</p>
+            <h2 class="pricing-card__title" data-content-key="pricing.single.title">FlowRing Single</h2>
+            <p class="pricing-card__desc" data-content-key="pricing.single.desc">One device for one faucet. Perfect to try FlowRing or cover your most-used tap.</p>
             <div class="pricing-card__price">
-              <span class="pricing-card__amount">$49</span>
-              <span class="pricing-card__unit">one-time</span>
+              <span class="pricing-card__amount" data-content-key="pricing.single.amount">$19.99</span>
+              <span class="pricing-card__unit" data-content-key="pricing.single.unit">one-time</span>
             </div>
-            <ul class="pricing-card__features">
+            <ul class="pricing-card__features" data-content-key="pricing.single.features">
               <li>1× FlowRing device</li>
               <li>Clip-on installation</li>
               <li>AI learning & LED feedback</li>
               <li>No app or subscription</li>
             </ul>
-            <a href="#" class="btn btn-primary pricing-card__cta" data-cart-add="flowring-single">Add to cart</a>
+            <a href="#" class="btn btn-primary pricing-card__cta btn-soon" data-cart-add="flowring-single" aria-disabled="true">Add to cart</a>
           </article>
 
           <article class="pricing-card pricing-card--featured">
-            <span class="pricing-card__badge">Best value</span>
+            <span class="pricing-card__badge" data-content-key="pricing.pack3.badge">Best value</span>
             <div class="pricing-card__img pricing-card__img--pack" aria-hidden="true"></div>
-            <h2 class="pricing-card__title">FlowRing 3-Pack</h2>
-            <p class="pricing-card__desc">Kitchen + two bathrooms, or share with family. Save more, waste less.</p>
+            <h2 class="pricing-card__title" data-content-key="pricing.pack3.title">FlowRing 3-Pack</h2>
+            <p class="pricing-card__desc" data-content-key="pricing.pack3.desc">Kitchen + two bathrooms, or share with family. Save more, waste less.</p>
             <div class="pricing-card__price">
-              <span class="pricing-card__amount">$119</span>
-              <span class="pricing-card__unit">one-time</span>
+              <span class="pricing-card__amount" data-content-key="pricing.pack3.amount">$59.99</span>
+              <span class="pricing-card__unit" data-content-key="pricing.pack3.unit">one-time</span>
             </div>
-            <p class="pricing-card__savings">Save $28 vs buying 3 singles</p>
-            <ul class="pricing-card__features">
+            <ul class="pricing-card__features" data-content-key="pricing.pack3.features">
               <li>3× FlowRing devices</li>
               <li>Clip-on installation</li>
               <li>AI learning & LED feedback</li>
               <li>No app or subscription</li>
             </ul>
-            <a href="#" class="btn btn-primary pricing-card__cta" data-cart-add="flowring-3pack">Add to cart</a>
+            <a href="#" class="btn btn-primary pricing-card__cta btn-soon" data-cart-add="flowring-3pack" aria-disabled="true">Add to cart</a>
           </article>
 
-          <article class="pricing-card">
-            <div class="pricing-card__img pricing-card__img--multi" aria-hidden="true"></div>
-            <h2 class="pricing-card__title">FlowRing 6-Pack</h2>
-            <p class="pricing-card__desc">For larger homes, small businesses, or schools. Maximum impact.</p>
-            <div class="pricing-card__price">
-              <span class="pricing-card__amount">$219</span>
-              <span class="pricing-card__unit">one-time</span>
-            </div>
-            <p class="pricing-card__savings">Save $75 vs buying 6 singles</p>
-            <ul class="pricing-card__features">
-              <li>6× FlowRing devices</li>
-              <li>Clip-on installation</li>
-              <li>AI learning & LED feedback</li>
-              <li>No app or subscription</li>
-            </ul>
-            <a href="#" class="btn btn-secondary pricing-card__cta" data-cart-add="flowring-6pack">Add to cart</a>
-          </article>
         </div>
-        <p class="pricing-note">Free shipping on orders over $75. No plumbing, no professional installation. Works on standard faucets.</p>
+        <p class="pricing-note" data-content-key="pricing.note">Free shipping on orders over $75. No plumbing, no professional installation. Works on standard faucets.</p>
       </div>
     </section>
   </main>
@@ -147,7 +129,7 @@
   </footer>
   <script src="js/main.js"></script>
   <script src="js/content-loader.js"></script>
-  <script src="js/cart-add.js"></script>
+  <script src="js/cart-soon.js"></script>
   <script src="js/account-header.js"></script>
 </body>
 </html>
