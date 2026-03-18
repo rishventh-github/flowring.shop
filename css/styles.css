@@ -575,9 +575,10 @@ a:hover { color: var(--color-ocean); }
 .gallery-item__img {
   aspect-ratio: 4 / 3;
   width: 100%;
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
+  background-color: var(--color-white);
 }
 .gallery-item__img--product {
   background: linear-gradient(145deg, var(--color-foam) 0%, var(--color-mist) 50%, var(--color-aqua) 100%);
@@ -609,7 +610,7 @@ a:hover { color: var(--color-ocean); }
 }
 @media (max-width: 479px) {
   .gallery-grid { grid-template-columns: 1fr; gap: 1.25rem; }
-  .gallery-item__img { aspect-ratio: 16 / 10; }
+  .gallery-item__img { aspect-ratio: 16 / 12; }
 }
 
 /* Footer */
