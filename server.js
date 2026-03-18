@@ -84,19 +84,18 @@ const defaultContent = [
   { key: 'team.cta', value: 'We’re a small team focused on real impact. <a href="about.html">Learn more about FlowRing</a> or <a href="pricing.html">get your device</a>.', type: 'text' },
   { key: 'gallery.title', value: 'Gallery', type: 'text' },
   { key: 'gallery.subtitle', value: 'FlowRing in the wild — product, installation, and everyday use.', type: 'text' },
-  // Gallery images are intentionally blank until real photos are ready
-  { key: 'gallery.image.1', value: '', type: 'image' },
-  { key: 'gallery.caption.1', value: 'Coming soon.', type: 'text' },
-  { key: 'gallery.image.2', value: '', type: 'image' },
-  { key: 'gallery.caption.2', value: 'Coming soon.', type: 'text' },
-  { key: 'gallery.image.3', value: '', type: 'image' },
-  { key: 'gallery.caption.3', value: 'Coming soon.', type: 'text' },
-  { key: 'gallery.image.4', value: '', type: 'image' },
-  { key: 'gallery.caption.4', value: 'Coming soon.', type: 'text' },
-  { key: 'gallery.image.5', value: '', type: 'image' },
-  { key: 'gallery.caption.5', value: 'Coming soon.', type: 'text' },
-  { key: 'gallery.image.6', value: '', type: 'image' },
-  { key: 'gallery.caption.6', value: 'Coming soon.', type: 'text' },
+  { key: 'gallery.image.1', value: 'images/gallery-1.png', type: 'image' },
+  { key: 'gallery.caption.1', value: 'Gallery photo 1', type: 'text' },
+  { key: 'gallery.image.2', value: 'images/gallery-2.png', type: 'image' },
+  { key: 'gallery.caption.2', value: 'Gallery photo 2', type: 'text' },
+  { key: 'gallery.image.3', value: 'images/gallery-3.png', type: 'image' },
+  { key: 'gallery.caption.3', value: 'Gallery photo 3', type: 'text' },
+  { key: 'gallery.image.4', value: 'images/gallery-4.png', type: 'image' },
+  { key: 'gallery.caption.4', value: 'Gallery photo 4', type: 'text' },
+  { key: 'gallery.image.5', value: 'images/gallery-5.png', type: 'image' },
+  { key: 'gallery.caption.5', value: 'Gallery photo 5', type: 'text' },
+  { key: 'gallery.image.6', value: 'images/gallery-6.png', type: 'image' },
+  { key: 'gallery.caption.6', value: 'Gallery photo 6', type: 'text' },
   { key: 'blogs.title', value: 'Blog', type: 'text' },
   { key: 'blogs.subtitle', value: 'Updates, tips, and stories from the FlowRing team.', type: 'text' },
   { key: 'reviews.title', value: 'Reviews', type: 'text' },
@@ -131,6 +130,20 @@ defaultContent.forEach(({ key, value, type }) => insertBlock.run(key, value, typ
 db.prepare("UPDATE content_blocks SET value = ? WHERE key = ? AND value = ?").run('$19.99', 'pricing.single.amount', '$49');
 db.prepare("UPDATE content_blocks SET value = ? WHERE key = ? AND value = ?").run('$59.99', 'pricing.pack3.amount', '$119');
 db.prepare("DELETE FROM content_blocks WHERE key = ?").run('pricing.pack3.savings');
+
+// Sync gallery images in case the DB still has blank "Coming soon" values
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('images/gallery-1.png', 'gallery.image.1');
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('Gallery photo 1', 'gallery.caption.1');
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('images/gallery-2.png', 'gallery.image.2');
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('Gallery photo 2', 'gallery.caption.2');
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('images/gallery-3.png', 'gallery.image.3');
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('Gallery photo 3', 'gallery.caption.3');
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('images/gallery-4.png', 'gallery.image.4');
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('Gallery photo 4', 'gallery.caption.4');
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('images/gallery-5.png', 'gallery.image.5');
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('Gallery photo 5', 'gallery.caption.5');
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('images/gallery-6.png', 'gallery.image.6');
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('Gallery photo 6', 'gallery.caption.6');
 
 // Seed team members (only if empty)
 // Lightweight migration for older DBs (add missing photo_url column)
