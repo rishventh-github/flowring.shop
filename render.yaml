@@ -1,0 +1,19 @@
+# Render Blueprint — deploy FlowRing (flowring.shop)
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: flowring-shop
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: SESSION_SECRET
+        generateValue: true
+    disk:
+      name: flowring-data
+      mountPath: data
+      sizeGB: 1

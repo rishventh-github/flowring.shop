@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin — FlowRing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600&family=Sora:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .admin { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem; }
+    .admin__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .admin__title { font-family: Sora, sans-serif; font-size: 1.5rem; color: #0d3b66; margin: 0; }
+    .admin__out { color: #1a6fa8; font-weight: 600; text-decoration: none; }
+    .admin__out:hover { text-decoration: underline; }
+    .admin__section { margin-bottom: 2.5rem; }
+    .admin__section h2 { font-family: Sora, sans-serif; font-size: 1.25rem; color: #0d3b66; margin: 0 0 1rem; }
+    .admin-table { width: 100%; border-collapse: collapse; }
+    .admin-table th, .admin-table td { padding: 0.5rem 0.75rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    .admin-table th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; }
+    .admin-form { display: grid; gap: 0.75rem; margin-bottom: 1rem; }
+    .admin-form label { font-size: 0.875rem; font-weight: 600; }
+    .admin-form input, .admin-form select, .admin-form textarea { padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9375rem; font-family: inherit; }
+    .admin-form textarea { min-height: 100px; resize: vertical; }
+    .admin-form .row { display: flex; gap: 0.5rem; align-items: center; }
+    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8125rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
+    .btn-save { background: #1a6fa8; color: white; }
+    .btn-edit { background: #e0f2fe; color: #0d3b66; }
+    .btn-del { background: #fef2f2; color: #dc2626; }
+    .btn-new { background: #0d3b66; color: white; margin-bottom: 1rem; }
+    .content-block { background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 0.75rem; }
+    .content-block__key { font-weight: 600; color: #0d3b66; margin-bottom: 0.35rem; }
+    .content-block__input { width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 0.35rem; font-family: inherit; box-sizing: border-box; }
+    .content-block__input.textarea { min-height: 60px; resize: vertical; }
+    .post-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 0.5rem; }
+    .post-row a { color: #1a6fa8; }
+    .post-draft { font-size: 0.75rem; background: #fef3c7; color: #92400e; padding: 0.2rem 0.5rem; border-radius: 4px; }
+    #admin-gate { text-align: center; padding: 3rem 1rem; }
+  </style>
+</head>
+<body>
+  <div id="admin-gate" style="display:none;">
+    <p>Checking access…</p>
+  </div>
+  <div id="admin-app" class="admin" style="display:none;">
+    <header class="admin__head">
+      <h1 class="admin__title">FlowRing Admin</h1>
+      <div style="display:flex;gap:0.9rem;align-items:center;flex-wrap:wrap;">
+        <a href="/" class="admin__out">Back to FlowRing</a>
+        <a href="#" id="admin-logout" class="admin__out">Log out</a>
+      </div>
+    </header>
+
+    <section class="admin__section">
+      <h2>Edit site content</h2>
+      <p style="font-size:0.875rem;color:#64748b;margin-bottom:1rem;">Text with <code>data-content-key</code> on the site is loaded from here. Change a value and click Save; it will appear for all visitors.</p>
+      <div id="content-blocks"></div>
+    </section>
+
+    <section class="admin__section">
+      <h2>Add content block</h2>
+      <div class="admin-form">
+        <label>Key (e.g. hero.title)</label>
+        <input type="text" id="new-block-key" placeholder="hero.title">
+        <label>Type</label>
+        <select id="new-block-type">
+          <option value="text">Text (HTML allowed)</option>
+          <option value="image">Image URL</option>
+        </select>
+        <label>Value</label>
+        <input type="text" id="new-block-value" placeholder="Your text or image URL">
+        <button type="button" id="btn-add-block" class="btn-sm btn-save">Add block</button>
+      </div>
+    </section>
+
+    <section class="admin__section">
+      <h2>Blog posts</h2>
+      <a href="/admin/post.html" class="btn-sm btn-new">New post</a>
+      <div id="posts-list"></div>
+    </section>
+  </div>
+
+  <script>
+    var API = '/api';
+    var isDirty = false;
+
+    function setDirty(dirty) {
+      isDirty = !!dirty;
+    }
+
+    function confirmLeaveIfDirty() {
+      if (!isDirty) return true;
+      return window.confirm('You have unsaved changes. Save before leaving this page?');
+    }
+
+    window.addEventListener('beforeunload', function (e) {
+      if (!isDirty) return;
+      e.preventDefault();
+      e.returnValue = '';
+    });
+
+    function bindDirtyTracking() {
+      // Any edits to content block inputs mark the page dirty
+      document.querySelectorAll('.content-block__input, #new-block-key, #new-block-type, #new-block-value').forEach(function (el) {
+        if (!el) return;
+        el.addEventListener('input', function () { setDirty(true); });
+        el.addEventListener('change', function () { setDirty(true); });
+      });
+    }
+
+    function checkAuth() {
+      document.getElementById('admin-gate').style.display = 'block';
+      fetch(API + '/admin/me').then(function (r) { return r.json(); }).then(function (data) {
+        document.getElementById('admin-gate').style.display = 'none';
+        if (data.admin) {
+          document.getElementById('admin-app').style.display = 'block';
+          loadContent();
+          loadPosts();
+          // bind after first render
+          setTimeout(bindDirtyTracking, 0);
+        } else {
+          window.location.href = '/admin/login';
+        }
+      }).catch(function () {
+        document.getElementById('admin-gate').style.display = 'none';
+        window.location.href = '/admin/login';
+      });
+    }
+    function loadContent() {
+      fetch(API + '/admin/content', { credentials: 'include' }).then(function (r) { return r.json(); }).then(function (rows) {
+        var html = '';
+        rows.forEach(function (row) {
+          var isTextarea = (row.value || '').length > 80 || (row.value || '').indexOf('\n') >= 0;
+          html += '<div class="content-block" data-key="' + escapeAttr(row.key) + '" data-type="' + escapeAttr(row.type) + '">' +
+            '<div class="content-block__key">' + escapeHtml(row.key) + ' (' + row.type + ')</div>' +
+            '<' + (isTextarea ? 'textarea' : 'input') + ' class="content-block__input' + (isTextarea ? ' textarea' : '') + '" data-key="' + escapeAttr(row.key) + '" ' + (isTextarea ? '>' + escapeHtml(row.value || '') + '</textarea>' : ' value="' + escapeAttr(row.value || '') + '"') + '>' +
+            '<button type="button" class="btn-sm btn-save" style="margin-top:0.5rem" data-save-key="' + escapeAttr(row.key) + '">Save</button></div>';
+        });
+        document.getElementById('content-blocks').innerHTML = html || '<p>No content blocks.</p>';
+        bindDirtyTracking();
+        document.querySelectorAll('[data-save-key]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var key = btn.getAttribute('data-save-key');
+            var el = document.querySelector('.content-block__input[data-key="' + escapeAttr(key) + '"]');
+            var block = document.querySelector('.content-block[data-key="' + escapeAttr(key) + '"]');
+            var type = (block && block.getAttribute('data-type')) || 'text';
+            var value = el ? (el.tagName === 'TEXTAREA' ? el.value : el.value) : '';
+            fetch(API + '/admin/content', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({ key: key, value: value, type: type })
+            }).then(function (r) {
+              if (r.ok) {
+                alert('Saved.');
+                setDirty(false);
+              }
+            });
+          });
+        });
+      });
+    }
+    function loadPosts() {
+      fetch(API + '/posts', { credentials: 'include' }).then(function (r) { return r.json(); }).then(function (posts) {
+        var html = posts.map(function (p) {
+          return '<div class="post-row">' +
+            '<div><a href="/blog-post.html?slug=' + encodeURIComponent(p.slug) + '" target="_blank">' + escapeHtml(p.title) + '</a> ' +
+            (p.published ? '' : '<span class="post-draft">Draft</span>') + '</div>' +
+            '<div><a href="/admin/post.html?id=' + p.id + '" class="btn-sm btn-edit">Edit</a></div>' +
+            '</div>';
+        }).join('');
+        document.getElementById('posts-list').innerHTML = html || '<p>No posts yet.</p>';
+      });
+    }
+    document.getElementById('btn-add-block').addEventListener('click', function () {
+      var key = document.getElementById('new-block-key').value.trim();
+      var type = document.getElementById('new-block-type').value;
+      var value = document.getElementById('new-block-value').value;
+      if (!key) { alert('Enter a key.'); return; }
+      fetch(API + '/admin/content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ key: key, value: value, type: type })
+      }).then(function (r) {
+        if (r.ok) {
+          document.getElementById('new-block-key').value = '';
+          document.getElementById('new-block-value').value = '';
+          setDirty(false);
+          loadContent();
+        }
+      });
+    });
+    document.getElementById('admin-logout').addEventListener('click', function (e) {
+      e.preventDefault();
+      if (!confirmLeaveIfDirty()) return;
+      fetch(API + '/logout', { method: 'POST', credentials: 'include' }).then(function () { window.location.href = '/admin/login'; });
+    });
+    // Back-to-site link also warns if dirty
+    var backLink = document.querySelector('a[href="/"]');
+    if (backLink) {
+      backLink.addEventListener('click', function (e) {
+        if (!confirmLeaveIfDirty()) e.preventDefault();
+      });
+    }
+    function escapeHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    function escapeAttr(s) { return String(s).replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+    checkAuth();
+  </script>
+</body>
+</html>

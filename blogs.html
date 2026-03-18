@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blog — FlowRing | flowring.shop</title>
+  <meta name="description" content="FlowRing blog: water conservation, product updates, and tips.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo">Flow<span>Ring</span></a>
+      <button type="button" class="nav-toggle" aria-label="Open menu">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="header-right">
+        <nav>
+          <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blogs.html">Blog</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li id="nav-account-item"><a href="account.html">Account</a></li>
+          </ul>
+        </nav>
+        <div class="header-profile" id="header-profile" style="display: none;">
+          <button type="button" class="header-profile__btn" id="header-profile-btn" aria-expanded="false" aria-haspopup="true" aria-label="Account menu">
+            <span class="header-profile__avatar" id="header-profile-avatar">?</span>
+          </button>
+          <div class="header-profile__dropdown" id="header-profile-dropdown">
+            <a href="account.html">Account</a>
+            <button type="button" id="header-profile-logout">Log out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-enter">
+    <section class="page-hero">
+      <div class="container">
+        <h1 class="section-title">Blog</h1>
+        <p class="subtitle">Updates, tips, and stories from the FlowRing team.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div id="blog-admin-actions" class="blog-admin-actions" style="display: none;">
+          <a href="/admin/post.html" class="btn btn-primary">New post</a>
+          <a href="/admin/" class="btn btn-secondary">Manage posts</a>
+        </div>
+        <div id="blog-list" class="blog-list">
+          <p class="blog-loading" id="blog-loading">Loading posts…</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Product</h4>
+          <ul>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="about.html">How It Works</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Terms</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p data-content-key="footer.copyright">© FlowRing. flowring.shop — Preserving Every Drop Smarter.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="js/main.js"></script>
+  <script src="js/blogs.js"></script>
+  <script src="js/content-loader.js"></script>
+  <script src="js/account-header.js"></script>
+</body>
+</html>

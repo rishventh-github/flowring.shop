@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Login — FlowRing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600&family=Sora:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .admin-login { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--color-foam, #e0f2fe); padding: 1rem; }
+    .admin-login__box { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 8px 32px rgba(13,59,102,0.12); width: 100%; max-width: 360px; }
+    .admin-login__title { font-family: Sora, sans-serif; font-size: 1.5rem; color: #0d3b66; margin: 0 0 1.5rem; }
+    .admin-login__label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.35rem; color: #0f172a; }
+    .admin-login__input { width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; margin-bottom: 1rem; box-sizing: border-box; }
+    .admin-login__btn { width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #1a6fa8, #0d3b66); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem; }
+    .admin-login__btn:hover { opacity: 0.95; }
+    .admin-login__error { color: #dc2626; font-size: 0.875rem; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <div class="admin-login">
+    <div class="admin-login__box">
+      <h1 class="admin-login__title">FlowRing Admin</h1>
+      <p style="font-size:0.875rem;color:#64748b;margin-bottom:1rem;">Log in with the admin password, or use your admin account <strong>rishventh.r@gmail.com</strong> on the main site <a href="/account.html">Account</a> page, then return here.</p>
+      <form id="login-form">
+        <label class="admin-login__label" for="password">Password</label>
+        <input type="password" id="password" class="admin-login__input" required autocomplete="current-password" placeholder="Admin password">
+        <button type="submit" class="admin-login__btn">Log in</button>
+        <p id="login-error" class="admin-login__error" hidden></p>
+      </form>
+    </div>
+  </div>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var pwd = document.getElementById('password').value;
+      var err = document.getElementById('login-error');
+      err.hidden = true;
+      fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pwd })
+      }).then(function (r) {
+        if (r.ok) {
+          window.location.href = '/admin/';
+        } else {
+          err.textContent = 'Invalid password.';
+          err.hidden = false;
+        }
+      }).catch(function () {
+        err.textContent = 'Network error.';
+        err.hidden = false;
+      });
+    });
+  </script>
+</body>
+</html>

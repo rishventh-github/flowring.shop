@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FlowRing — Prevent Water Waste Before It Happens | flowring.shop</title>
+  <meta name="description" content="FlowRing is a compact, AI-powered device that attaches to your faucet and reduces water waste in real time. No plumbing. No professional installation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo">Flow<span>Ring</span></a>
+      <button type="button" class="nav-toggle" aria-label="Open menu">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="header-right">
+        <nav>
+          <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blogs.html">Blog</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li id="nav-account-item"><a href="account.html">Account</a></li>
+          </ul>
+        </nav>
+        <div class="header-profile" id="header-profile" style="display: none;">
+          <button type="button" class="header-profile__btn" id="header-profile-btn" aria-expanded="false" aria-haspopup="true" aria-label="Account menu">
+            <span class="header-profile__avatar" id="header-profile-avatar">?</span>
+          </button>
+          <div class="header-profile__dropdown" id="header-profile-dropdown">
+            <a href="account.html">Account</a>
+            <button type="button" id="header-profile-logout">Log out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-enter">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero__inner">
+        <div class="scroll-reveal is-visible">
+          <p class="hero__greeting reveal-child reveal-child--delay-1" id="hero-greeting" style="display: none;"></p>
+          <p class="hero__tagline reveal-child reveal-child--delay-1" data-content-key="hero.tagline">Preserving Every Drop Smarter — For Anyone, Anywhere.</p>
+          <h1 class="hero__title reveal-child reveal-child--delay-2" data-content-key="hero.title">Prevent Water Waste <br>Before It Happens.</h1>
+          <p class="hero__lead reveal-child reveal-child--delay-3" data-content-key="hero.lead">A compact, AI-powered device that attaches to your faucet handle and reduces everyday water waste in real time. No plumbing. No professional installation. No expensive smart home setup.</p>
+          <div class="hero__actions reveal-child reveal-child--delay-4">
+            <a href="account.html" class="btn btn-primary">Get FlowRing</a>
+            <a href="about.html" class="btn btn-secondary">How It Works</a>
+          </div>
+          <p class="hero__account-links reveal-child reveal-child--delay-4" id="hero-account-links">
+            <a href="account.html">Create an account</a>
+            <span class="hero__account-sep">·</span>
+            <a href="account.html">Log in</a>
+          </p>
+        </div>
+      </div>
+      <div class="hero__bg" aria-hidden="true"></div>
+    </section>
+
+    <!-- How it works -->
+    <section class="section section--alt" id="how-it-works">
+      <div class="container scroll-reveal">
+        <h2 class="section-title reveal-child reveal-child--delay-1" data-content-key="howitworks.title">How It Works</h2>
+        <p class="subtitle reveal-child reveal-child--delay-2" data-content-key="howitworks.subtitle">FlowRing turns any faucet into a smart, predictive conservation system in seconds.</p>
+        <ul class="steps">
+          <li class="step reveal-child reveal-child--delay-2">
+            <span class="step__num">1</span>
+            <h3 class="step__title">Attach</h3>
+            <p class="step__text">Clip onto your faucet handle in seconds.</p>
+          </li>
+          <li class="step reveal-child reveal-child--delay-3">
+            <span class="step__num">2</span>
+            <h3 class="step__title">Learn</h3>
+            <p class="step__text">FlowRing analyzes your household’s typical water usage patterns.</p>
+          </li>
+          <li class="step reveal-child reveal-child--delay-4">
+            <span class="step__num">3</span>
+            <h3 class="step__title">Predict</h3>
+            <p class="step__text">It identifies extended or unnecessary water flow.</p>
+          </li>
+          <li class="step reveal-child reveal-child--delay-5">
+            <span class="step__num">4</span>
+            <h3 class="step__title">Interrupt</h3>
+            <p class="step__text">Escalating LED feedback signals excess use in real time.</p>
+          </li>
+        </ul>
+        <p class="section-note reveal-child reveal-child--delay-6">By delivering feedback at the exact moment of decision, FlowRing helps reduce waste without constant app monitoring or behavior tracking.</p>
+      </div>
+    </section>
+
+    <!-- Why different -->
+    <section class="section section--dark">
+      <div class="container scroll-reveal">
+        <h2 class="section-title reveal-child reveal-child--delay-1" data-content-key="why.title">Why FlowRing Is Different</h2>
+        <p class="subtitle reveal-child reveal-child--delay-2" data-content-key="why.subtitle">They monitor. FlowRing prevents.</p>
+        <div class="compare">
+          <div class="compare__col compare__col--other reveal-child reveal-child--delay-3">
+            <h3>Most smart water products</h3>
+            <ul>
+              <li>Monitor usage after the fact</li>
+              <li>Focus on leak detection</li>
+              <li>Require plumbing integration</li>
+              <li>Cost hundreds of dollars</li>
+            </ul>
+          </div>
+          <div class="compare__col compare__col--us reveal-child reveal-child--delay-4">
+            <h3>FlowRing</h3>
+            <ul>
+              <li>Prevents behavioral waste in real time</li>
+              <li>Works universally on standard faucets</li>
+              <li>Affordable and accessible</li>
+              <li>Zero plumbing modification</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Real impact -->
+    <section class="section">
+      <div class="container scroll-reveal">
+        <h2 class="section-title reveal-child reveal-child--delay-1" data-content-key="impact.title">Real Impact</h2>
+        <p class="subtitle reveal-child reveal-child--delay-2" data-content-key="impact.subtitle">Reducing faucet waste means lower bills, less energy, and a smaller environmental footprint.</p>
+        <div class="impact-grid">
+          <div class="impact-card reveal-child reveal-child--delay-2">
+            <div class="impact-card__icon">💧</div>
+            <h3>Lower water bills</h3>
+            <p>Spend less on water and hot water energy.</p>
+          </div>
+          <div class="impact-card reveal-child reveal-child--delay-3">
+            <div class="impact-card__icon">🌎</div>
+            <h3>Smaller footprint</h3>
+            <p>Designed for homes, schools, and underserved communities.</p>
+          </div>
+          <div class="impact-card reveal-child reveal-child--delay-4">
+            <div class="impact-card__icon">✨</div>
+            <h3>For everyone</h3>
+            <p>Smart conservation shouldn’t be limited to luxury homes.</p>
+          </div>
+        </div>
+        <p class="section-cta reveal-child reveal-child--delay-5"><a href="pricing.html" class="btn btn-primary">See pricing</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Product</h4>
+          <ul>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="about.html">How It Works</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Terms</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p data-content-key="footer.copyright">© FlowRing. flowring.shop — Preserving Every Drop Smarter.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="js/main.js"></script>
+  <script src="js/content-loader.js"></script>
+  <script src="js/account-header.js"></script>
+</body>
+</html>

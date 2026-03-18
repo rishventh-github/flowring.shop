@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About — FlowRing | flowring.shop</title>
+  <meta name="description" content="Why FlowRing exists, our mission, and how we’re helping households prevent water waste before it happens.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo">Flow<span>Ring</span></a>
+      <button type="button" class="nav-toggle" aria-label="Open menu">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="header-right">
+        <nav>
+          <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html" aria-current="page">About</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blogs.html">Blog</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li id="nav-account-item"><a href="account.html">Account</a></li>
+          </ul>
+        </nav>
+        <div class="header-profile" id="header-profile" style="display: none;">
+          <button type="button" class="header-profile__btn" id="header-profile-btn" aria-expanded="false" aria-haspopup="true" aria-label="Account menu">
+            <span class="header-profile__avatar" id="header-profile-avatar">?</span>
+          </button>
+          <div class="header-profile__dropdown" id="header-profile-dropdown">
+            <a href="account.html">Account</a>
+            <button type="button" id="header-profile-logout">Log out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-enter">
+    <section class="page-hero">
+      <div class="container">
+        <h1 class="section-title" data-content-key="about.title">Our mission: prevent water waste before it happens.</h1>
+        <p class="subtitle" data-content-key="about.subtitle">FlowRing exists to make everyday conservation effortless, starting at the tap.</p>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container about-layout">
+        <div class="about-visual scroll-reveal">
+          <div class="about-stat-card reveal-child reveal-child--delay-1">
+            <h2 class="about-stat-title" data-content-key="about.stat.title">Water stress is accelerating.</h2>
+            <p class="about-stat-text" data-content-key="about.stat.text">
+              By 2050, roughly <strong>half of the world’s population</strong> is projected to live in water‑stressed areas.
+            </p>
+            <ul class="about-stat-list">
+              <li>Growing cities are drawing more water than local sources can replenish.</li>
+              <li>Everyday household use (showers, dishes, brushing teeth) compounds into billions of wasted liters.</li>
+              <li>Most tools focus on leaks after they happen — not on behavior while water is flowing.</li>
+            </ul>
+            <p class="about-source">
+              Source: <a href="https://www.wri.org/insights/future-water-stress-how-cities-rank" target="_blank" rel="noopener noreferrer">World Resources Institute — Aqueduct analysis</a>
+            </p>
+          </div>
+        </div>
+        <div class="about-copy scroll-reveal">
+          <p class="about-lead reveal-child reveal-child--delay-1" data-content-key="about.lead">
+            FlowRing started with a simple question: <strong>what if the easiest place to save water is at the exact moment we turn on the tap?</strong>
+          </p>
+          <p class="reveal-child reveal-child--delay-2">
+            Homes already have meters, apps, and dashboards that show usage after the fact. But by the time you see a monthly bill or a chart, the water is already gone. We wanted a way to gently interrupt waste while it’s still happening — without shaming people or forcing them into a complicated smart‑home setup.
+          </p>
+          <p class="reveal-child reveal-child--delay-3">
+            FlowRing clips onto a standard faucet handle and uses on‑device intelligence to recognize when water has likely been running longer than necessary. It responds with escalating light cues: a soft glow at first, then a more insistent signal that says, “hey, you might be done here.”
+          </p>
+          <p class="reveal-child reveal-child--delay-4">
+            Instead of tracking you or recording what you do in your home, FlowRing focuses on a single, high‑impact behavior: <strong>leaving water running just a little too long</strong>. That’s where small, everyday decisions add up to meaningful savings over months and years.
+          </p>
+          <div class="about-pillars reveal-child reveal-child--delay-5">
+            <h2 class="section-title" style="font-size:1.25rem;">What we care about</h2>
+            <ul>
+              <li><strong>Effortless adoption.</strong> No plumbing, no hub, no installer. Clip it on and go.</li>
+              <li><strong>Respect for privacy.</strong> No cameras, no microphones, no continuous behavioral tracking.</li>
+              <li><strong>Real‑world impact.</strong> Designed to work in rentals, family homes, and shared spaces — not just high‑end smart homes.</li>
+            </ul>
+          </div>
+          <p class="reveal-child reveal-child--delay-6">
+            We’re building FlowRing for people who want to do the right thing for the planet, but don’t have time to think about every faucet turn. If that’s you, we’re glad you’re here.
+          </p>
+          <p class="about-cta reveal-child reveal-child--delay-7">
+            <a href="pricing.html" class="btn btn-primary">Get FlowRing</a>
+            <a href="gallery.html" class="btn btn-secondary">See FlowRing in action</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Product</h4>
+          <ul>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="about.html">How It Works</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Terms</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p data-content-key="footer.copyright">© FlowRing. flowring.shop — Preserving Every Drop Smarter.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/content-loader.js"></script>
+  <script src="js/account-header.js"></script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edit Post — FlowRing Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600&family=Sora:wght@600&display=swap" rel="stylesheet">
+  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+  <style>
+    body { font-family: DM Sans, sans-serif; max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem; }
+    h1 { font-family: Sora, sans-serif; font-size: 1.25rem; color: #0d3b66; margin-bottom: 1.5rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.35rem; }
+    .form-group input, .form-group textarea { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9375rem; font-family: inherit; box-sizing: border-box; }
+    .form-group textarea { min-height: 200px; resize: vertical; }
+    #body-editor { min-height: 280px; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; }
+    .ql-editor { min-height: 260px; font-size: 0.9375rem; }
+    .form-group small { font-size: 0.8125rem; color: #64748b; }
+    .row { display: flex; gap: 0.5rem; align-items: center; margin-top: 1rem; }
+    .btn { padding: 0.5rem 1rem; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 0.9375rem; }
+    .btn-primary { background: #1a6fa8; color: white; }
+    .btn-secondary { background: #e2e8f0; color: #0f172a; text-decoration: none; }
+    .btn-danger { background: #fef2f2; color: #dc2626; }
+    #gate { text-align: center; padding: 2rem; }
+  </style>
+</head>
+<body>
+  <div id="gate">Checking access…</div>
+  <div id="editor" style="display:none;">
+    <p style="margin: 0 0 1rem;">
+      <a class="btn btn-secondary" href="/admin/">← Admin</a>
+      <a class="btn btn-secondary" href="/">Back to FlowRing</a>
+    </p>
+    <h1 id="editor-title">New post</h1>
+    <form id="post-form">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" id="title" required placeholder="Post title">
+      </div>
+      <div class="form-group">
+        <label for="slug">Slug (URL)</label>
+        <input type="text" id="slug" placeholder="my-post-slug">
+        <small>Leave blank to auto-generate from title. Letters, numbers, hyphens only.</small>
+      </div>
+      <div class="form-group">
+        <label for="excerpt">Excerpt (optional)</label>
+        <textarea id="excerpt" rows="2" placeholder="Short summary for the blog list"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="body-editor">Body</label>
+        <div id="body-editor"></div>
+        <input type="hidden" id="body" name="body">
+      </div>
+      <div class="form-group">
+        <label><input type="checkbox" id="published" checked> Published</label>
+      </div>
+      <div class="row">
+        <button type="submit" class="btn btn-primary">Save post</button>
+        <a href="/admin/" class="btn btn-secondary">Cancel</a>
+        <button type="button" id="btn-delete" class="btn btn-danger" style="display:none;margin-left:auto">Delete post</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+  <script>
+    var API = '/api';
+    var postId = new URLSearchParams(window.location.search).get('id');
+    var quill;
+    var isDirty = false;
+
+    function setDirty(dirty) {
+      isDirty = !!dirty;
+    }
+
+    function confirmLeaveIfDirty() {
+      if (!isDirty) return true;
+      return window.confirm('You have unsaved changes. Save before leaving this page?');
+    }
+
+    window.addEventListener('beforeunload', function (e) {
+      if (!isDirty) return;
+      e.preventDefault();
+      e.returnValue = '';
+    });
+
+    function initEditor() {
+      quill = new Quill('#body-editor', {
+        theme: 'snow',
+        placeholder: 'Write your post… Add links, images, and formatting with the toolbar.',
+        modules: {
+          toolbar: [
+            [{ header: [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['link', 'image'],
+            ['blockquote', 'code-block'],
+            ['clean']
+          ]
+        }
+      });
+      quill.on('text-change', function () { setDirty(true); });
+      ['title', 'slug', 'excerpt', 'published'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('input', function () { setDirty(true); });
+        el.addEventListener('change', function () { setDirty(true); });
+      });
+    }
+
+    function setBodyHtml(html) {
+      if (!quill) return;
+      quill.root.innerHTML = html || '';
+      setDirty(false);
+    }
+
+    function getBodyHtml() {
+      return quill ? quill.root.innerHTML : '';
+    }
+
+    function checkAuth() {
+      fetch(API + '/admin/me').then(function (r) { return r.json(); }).then(function (data) {
+        if (data.admin) {
+          document.getElementById('gate').style.display = 'none';
+          document.getElementById('editor').style.display = 'block';
+          initEditor();
+          if (postId) {
+            document.getElementById('editor-title').textContent = 'Edit post';
+            document.getElementById('btn-delete').style.display = 'block';
+            fetch(API + '/posts', { credentials: 'include' }).then(function (r) { return r.json(); }).then(function (posts) {
+              var p = posts.find(function (x) { return String(x.id) === postId; });
+              if (p) {
+                fetch(API + '/posts/' + encodeURIComponent(p.slug), { credentials: 'include' }).then(function (r) { return r.json(); }).then(function (post) {
+                  document.getElementById('title').value = post.title;
+                  document.getElementById('slug').value = post.slug;
+                  document.getElementById('excerpt').value = post.excerpt || '';
+                  setBodyHtml(post.body || '');
+                  document.getElementById('published').checked = !!post.published;
+                });
+              }
+            });
+          }
+        } else {
+          window.location.href = '/admin/login';
+        }
+      }).catch(function () { window.location.href = '/admin/login'; });
+    }
+
+    document.getElementById('post-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var title = document.getElementById('title').value.trim();
+      var slug = document.getElementById('slug').value.trim();
+      var body = getBodyHtml().trim();
+      var excerpt = document.getElementById('excerpt').value.trim();
+      var published = document.getElementById('published').checked;
+      if (!title) { alert('Title is required.'); return; }
+      if (!body || body === '<p><br></p>') { alert('Body is required.'); return; }
+      if (!slug) slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      var url = postId ? API + '/admin/posts/' + postId : API + '/admin/posts';
+      var method = postId ? 'PUT' : 'POST';
+      var payload = { title: title, slug: slug, body: body, excerpt: excerpt, published: published };
+      fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload)
+      }).then(function (r) {
+        if (r.ok) { setDirty(false); window.location.href = '/admin/'; }
+        else r.json().then(function (d) { alert(d.error || 'Error saving.'); });
+      }).catch(function () { alert('Network error.'); });
+    });
+
+    document.getElementById('btn-delete').addEventListener('click', function () {
+      if (!confirmLeaveIfDirty()) return;
+      if (!confirm('Delete this post?')) return;
+      fetch(API + '/admin/posts/' + postId, { method: 'DELETE', credentials: 'include' }).then(function (r) {
+        if (r.ok) { setDirty(false); window.location.href = '/admin/'; }
+      });
+    });
+
+    // Guard nav links at top of page
+    document.querySelectorAll('a[href="/admin/"], a[href="/"]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        if (!confirmLeaveIfDirty()) e.preventDefault();
+      });
+    });
+
+    checkAuth();
+  </script>
+</body>
+</html>

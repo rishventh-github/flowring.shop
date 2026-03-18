@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Team — FlowRing | flowring.shop</title>
+  <meta name="description" content="Meet the team behind FlowRing, building smart water conservation for everyone.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo">Flow<span>Ring</span></a>
+      <button type="button" class="nav-toggle" aria-label="Open menu">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="header-right">
+        <nav>
+          <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blogs.html">Blog</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li id="nav-account-item"><a href="account.html">Account</a></li>
+          </ul>
+        </nav>
+        <div class="header-profile" id="header-profile" style="display: none;">
+          <button type="button" class="header-profile__btn" id="header-profile-btn" aria-expanded="false" aria-haspopup="true" aria-label="Account menu">
+            <span class="header-profile__avatar" id="header-profile-avatar">?</span>
+          </button>
+          <div class="header-profile__dropdown" id="header-profile-dropdown">
+            <a href="account.html">Account</a>
+            <button type="button" id="header-profile-logout">Log out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-enter">
+    <section class="page-hero">
+      <div class="container">
+        <h1 class="section-title">Our Team</h1>
+        <p class="subtitle">The people behind FlowRing — dedicated to making smart water conservation accessible to everyone.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="team-grid">
+          <article class="team-card">
+            <div class="team-card__avatar" aria-hidden="true">
+              <span class="team-card__initials">JD</span>
+            </div>
+            <h3 class="team-card__name">Jordan Davis</h3>
+            <p class="team-card__role">CEO & Co-Founder</p>
+            <p class="team-card__bio">Leads product vision and strategy. Former water infrastructure researcher.</p>
+          </article>
+          <article class="team-card">
+            <div class="team-card__avatar" aria-hidden="true">
+              <span class="team-card__initials">MK</span>
+            </div>
+            <h3 class="team-card__name">Maya Kim</h3>
+            <p class="team-card__role">CTO & Co-Founder</p>
+            <p class="team-card__bio">Hardware and ML. Built sensing systems for environmental monitoring.</p>
+          </article>
+          <article class="team-card">
+            <div class="team-card__avatar" aria-hidden="true">
+              <span class="team-card__initials">AR</span>
+            </div>
+            <h3 class="team-card__name">Alex Rivera</h3>
+            <p class="team-card__role">Head of Product</p>
+            <p class="team-card__bio">User experience and accessibility. Ensures FlowRing works for every home.</p>
+          </article>
+          <article class="team-card">
+            <div class="team-card__avatar" aria-hidden="true">
+              <span class="team-card__initials">SC</span>
+            </div>
+            <h3 class="team-card__name">Sam Chen</h3>
+            <p class="team-card__role">Head of Engineering</p>
+            <p class="team-card__bio">Firmware and edge AI. Makes the device reliable and privacy-first.</p>
+          </article>
+        </div>
+        <p class="section-note team-cta">We’re a small team focused on real impact. <a href="about.html">Learn more about FlowRing</a> or <a href="pricing.html">get your device</a>.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Product</h4>
+          <ul>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="about.html">How It Works</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Terms</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p data-content-key="footer.copyright">© FlowRing. flowring.shop — Preserving Every Drop Smarter.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="js/main.js"></script>
+  <script src="js/content-loader.js"></script>
+  <script src="js/account-header.js"></script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gallery — FlowRing | flowring.shop</title>
+  <meta name="description" content="See FlowRing in action: product shots, installation, and real-world use.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo">Flow<span>Ring</span></a>
+      <button type="button" class="nav-toggle" aria-label="Open menu">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="header-right">
+        <nav>
+          <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blogs.html">Blog</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li id="nav-account-item"><a href="account.html">Account</a></li>
+          </ul>
+        </nav>
+        <div class="header-profile" id="header-profile" style="display: none;">
+          <button type="button" class="header-profile__btn" id="header-profile-btn" aria-expanded="false" aria-haspopup="true" aria-label="Account menu">
+            <span class="header-profile__avatar" id="header-profile-avatar">?</span>
+          </button>
+          <div class="header-profile__dropdown" id="header-profile-dropdown">
+            <a href="account.html">Account</a>
+            <button type="button" id="header-profile-logout">Log out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-enter">
+    <section class="page-hero">
+      <div class="container">
+        <h1 class="section-title">Gallery</h1>
+        <p class="subtitle">FlowRing in the wild — product, installation, and everyday use.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="gallery-grid">
+          <figure class="gallery-item">
+            <div class="gallery-item__img gallery-item__img--product" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&fit=crop');" role="img" aria-label="FlowRing device on white background"></div>
+            <figcaption>FlowRing device — compact, clip-on design</figcaption>
+          </figure>
+          <figure class="gallery-item">
+            <div class="gallery-item__img gallery-item__img--faucet" style="background-image: url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&fit=crop');" role="img" aria-label="FlowRing attached to kitchen faucet"></div>
+            <figcaption>Attached to a standard kitchen faucet</figcaption>
+          </figure>
+          <figure class="gallery-item">
+            <div class="gallery-item__img gallery-item__img--bathroom" style="background-image: url('https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&fit=crop');" role="img" aria-label="FlowRing on bathroom faucet"></div>
+            <figcaption>Works on bathroom faucets too</figcaption>
+          </figure>
+          <figure class="gallery-item">
+            <div class="gallery-item__img gallery-item__img--led" style="background-image: url('https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&fit=crop');" role="img" aria-label="LED feedback in action"></div>
+            <figcaption>LED feedback during use</figcaption>
+          </figure>
+          <figure class="gallery-item">
+            <div class="gallery-item__img gallery-item__img--box" style="background-image: url('https://images.unsplash.com/photo-1565793298595-6a879b1d8002?w=600&fit=crop');" role="img" aria-label="FlowRing packaging"></div>
+            <figcaption>Packaging — ready to install in seconds</figcaption>
+          </figure>
+          <figure class="gallery-item">
+            <div class="gallery-item__img gallery-item__img--home" style="background-image: url('https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&fit=crop');" role="img" aria-label="FlowRing in a home setting"></div>
+            <figcaption>At home — no plumbing required</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Product</h4>
+          <ul>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="about.html">How It Works</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Terms</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p data-content-key="footer.copyright">© FlowRing. flowring.shop — Preserving Every Drop Smarter.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="js/main.js"></script>
+  <script src="js/content-loader.js"></script>
+  <script src="js/account-header.js"></script>
+</body>
+</html>
