@@ -131,20 +131,6 @@ db.prepare("UPDATE content_blocks SET value = ? WHERE key = ? AND value = ?").ru
 db.prepare("UPDATE content_blocks SET value = ? WHERE key = ? AND value = ?").run('$59.99', 'pricing.pack3.amount', '$119');
 db.prepare("DELETE FROM content_blocks WHERE key = ?").run('pricing.pack3.savings');
 
-// Sync gallery images in case the DB still has blank "Coming soon" values
-db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('images/gallery-1.png', 'gallery.image.1');
-db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('Gallery photo 1', 'gallery.caption.1');
-db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('images/gallery-2.png', 'gallery.image.2');
-db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('Gallery photo 2', 'gallery.caption.2');
-db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('images/gallery-3.png', 'gallery.image.3');
-db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('Gallery photo 3', 'gallery.caption.3');
-db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('images/gallery-4.png', 'gallery.image.4');
-db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('Gallery photo 4', 'gallery.caption.4');
-db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('images/gallery-5.png', 'gallery.image.5');
-db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('Gallery photo 5', 'gallery.caption.5');
-db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('images/gallery-6.png', 'gallery.image.6');
-db.prepare("UPDATE content_blocks SET value = ? WHERE key = ?").run('Gallery photo 6', 'gallery.caption.6');
-
 // Seed team members (only if empty)
 // Lightweight migration for older DBs (add missing photo_url column)
 try {
