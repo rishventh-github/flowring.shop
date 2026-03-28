@@ -48,6 +48,23 @@
     .post-draft { font-size: 0.75rem; background: #fef3c7; color: #92400e; padding: 0.2rem 0.5rem; border-radius: 4px; }
     #admin-gate { text-align: center; padding: 3rem 1rem; }
     .admin-empty { color: #64748b; font-size: 0.9375rem; padding: 1rem 0; }
+    .admin-toast {
+      position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%); z-index: 1000;
+      max-width: min(42rem, calc(100vw - 2rem)); padding: 0.85rem 1.1rem; border-radius: 10px;
+      background: #0f172a; color: #f8fafc; font-size: 0.875rem; line-height: 1.45;
+      box-shadow: 0 10px 40px rgba(15, 23, 42, 0.35);
+    }
+    .admin-persist-banner {
+      display: none; align-items: flex-start; gap: 0.75rem; justify-content: space-between;
+      margin-bottom: 1.25rem; padding: 0.75rem 1rem; background: #ecfdf5; border: 1px solid #6ee7b7;
+      border-radius: 8px; font-size: 0.875rem; color: #064e3b; line-height: 1.45;
+    }
+    .admin-persist-banner__text { margin: 0; flex: 1; }
+    .admin-persist-banner__dismiss {
+      flex-shrink: 0; padding: 0.35rem 0.65rem; border: none; border-radius: 6px;
+      background: #065f46; color: white; font-weight: 600; font-size: 0.8125rem; cursor: pointer; font-family: inherit;
+    }
+    .admin-persist-banner__dismiss:hover { background: #047857; }
   </style>
 </head>
 <body>
@@ -62,6 +79,12 @@
         <a href="#" id="admin-logout" class="admin__out">Log out</a>
       </div>
     </header>
+
+    <div id="admin-persist-banner" class="admin-persist-banner" role="status">
+      <p id="admin-persist-banner-text" class="admin-persist-banner__text"></p>
+      <button type="button" id="admin-persist-banner-dismiss" class="admin-persist-banner__dismiss">Dismiss</button>
+    </div>
+    <div id="admin-toast" class="admin-toast" role="status" aria-live="polite" style="display:none;"></div>
 
     <nav class="admin-tabs" role="tablist" aria-label="Page sections"></nav>
 
@@ -162,6 +185,49 @@
   <script>
     var API = '/api';
     var isDirty = false;
+    var TOAST_MS = 14000;
+
+    function showPersistNotice(message) {
+      if (!message) return;
+      var el = document.getElementById('admin-toast');
+      if (!el) return;
+      el.textContent = message;
+      el.style.display = 'block';
+      clearTimeout(window.__flowringToastTimer);
+      window.__flowringToastTimer = setTimeout(function () {
+        el.style.display = 'none';
+        el.textContent = '';
+      }, TOAST_MS);
+    }
+
+    function wirePersistBanner(hint) {
+      var bar = document.getElementById('admin-persist-banner');
+      var txt = document.getElementById('admin-persist-banner-text');
+      var dismiss = document.getElementById('admin-persist-banner-dismiss');
+      if (!bar || !txt || !dismiss || !hint) return;
+      try {
+        if (sessionStorage.getItem('flowring_persist_banner_dismissed')) {
+          bar.style.display = 'none';
+          return;
+        }
+      } catch (e) {}
+      txt.textContent = hint;
+      bar.style.display = 'flex';
+      dismiss.onclick = function () {
+        try { sessionStorage.setItem('flowring_persist_banner_dismissed', '1'); } catch (e) {}
+        bar.style.display = 'none';
+      };
+    }
+
+    function consumeRedirectSavedToast() {
+      try {
+        var m = sessionStorage.getItem('flowring_admin_saved');
+        if (m) {
+          sessionStorage.removeItem('flowring_admin_saved');
+          showPersistNotice(m);
+        }
+      } catch (e) {}
+    }
 
     var TAB_ORDER = [
       { id: 'home', label: 'Home' },
@@ -256,7 +322,11 @@
             credentials: 'include',
             body: JSON.stringify({ key: key, value: value, type: type })
           }).then(function (r) {
-            if (r.ok) { alert('Saved.'); setDirty(false); }
+            if (!r.ok) return;
+            r.json().then(function (d) {
+              showPersistNotice((d && d.message) || 'Saved.');
+              setDirty(false);
+            });
           });
         });
       });
@@ -366,7 +436,14 @@
               var id = btn.getAttribute('data-team-del');
               if (!confirm('Remove this team member?')) return;
               fetch(API + '/admin/team/' + id, { method: 'DELETE', credentials: 'include' })
-                .then(function (r) { if (r.ok) { resetTeamForm(); loadTeamMembers(); } });
+                .then(function (r) {
+                  if (!r.ok) return;
+                  r.json().then(function (d) {
+                    showPersistNotice((d && d.message) || 'Removed.');
+                    resetTeamForm();
+                    loadTeamMembers();
+                  });
+                });
             });
           });
 
@@ -431,6 +508,8 @@
         document.getElementById('admin-gate').style.display = 'none';
         if (data.admin) {
           document.getElementById('admin-app').style.display = 'block';
+          wirePersistBanner(data.persistenceHint);
+          consumeRedirectSavedToast();
           buildTabs();
           loadContent();
           loadPosts();
@@ -467,8 +546,11 @@
           body: JSON.stringify({ name: name, role: role, bio: bio, initials: initials, sort_order: sort, photo_url: photoUrl })
         }).then(function (r) {
           if (r.ok) {
-            resetTeamForm();
-            loadTeamMembers();
+            r.json().then(function (d) {
+              showPersistNotice((d && d.message) || 'Saved.');
+              resetTeamForm();
+              loadTeamMembers();
+            });
           } else {
             r.json().then(function (d) { alert((d && d.error) || 'Error saving team member.'); });
           }
@@ -490,13 +572,15 @@
         credentials: 'include',
         body: JSON.stringify({ key: key, value: value, type: type })
       }).then(function (r) {
-        if (r.ok) {
+        if (!r.ok) return;
+        r.json().then(function (d) {
+          showPersistNotice((d && d.message) || 'Saved.');
           document.getElementById('new-block-key').value = '';
           document.getElementById('new-block-value').value = '';
           setDirty(false);
           loadContent();
           activateTab(tabForKey(key));
-        }
+        });
       });
     });
 

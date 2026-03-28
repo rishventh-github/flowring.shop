@@ -31,15 +31,17 @@ Render runs your Node server, keeps SQLite data on a disk, and supports a custom
    - **Start command:** `npm start`
    - **Instance type:** Free (or paid if you need more).
 5. Under **Environment**, add:
-   - `ADMIN_PASSWORD` — pick a strong password (for `/admin/login`). Gogreen1009!
+   - `ADMIN_PASSWORD` — pick a strong password (for `/admin/login`).
    - `SESSION_SECRET` — random string (e.g. from [randomkeygen.com](https://randomkeygen.com)).
 6. Under **Disks**, add a disk:
    - Name: `flowring-data`
-   - Mount path: `data`
+   - Mount path: `data` (must match the app: SQLite is stored at `data/flowring.db` unless you override `DATA_DIR`)
    - Size: 1 GB  
-   (So the SQLite DB and uploads persist.)
-7. Click **Create Web Service**. Wait for the first deploy to finish.
-8. Your site will be at `https://YOUR_SERVICE_NAME.onrender.com`.
+   Without this disk, the filesystem is **ephemeral**: every deploy or restart creates a **new empty database** and admin changes look “lost.” After the service exists, open **Settings → Disks** and confirm the disk is attached (Blueprint-created services usually have it already).  
+   **Note:** On Render, **persistent disks require a paid instance type**—free web services cannot attach a disk, so SQLite on the default ephemeral filesystem will reset. Upgrade the instance (or use an external database) if you need admin edits to survive deploys.
+7. Optional: if your disk is mounted somewhere else, set environment variable **`DATA_DIR`** to that **absolute** path so `flowring.db` is written on the volume.
+8. Click **Create Web Service**. Wait for the first deploy to finish.
+9. Your site will be at `https://YOUR_SERVICE_NAME.onrender.com`.
 
 ### 3. Use flowring.shop as the domain
 
@@ -82,7 +84,7 @@ Your live site will be **https://flowring.shop** (and optionally **https://www.f
    Edit the repo (HTML, CSS, JS, server, etc.), commit, and push to the branch you deploy from (e.g. `main`). Render/Railway/Fly will redeploy automatically if you have “auto-deploy” on.
 
 2. **Content via admin**  
-   If the Node server is deployed, use **https://flowring.shop/admin/login** to edit content blocks and blog posts. Those changes apply immediately; no redeploy needed.
+   If the Node server is deployed, use **https://flowring.shop/admin/login** to edit content blocks and blog posts. Those changes apply immediately; no redeploy needed. They are stored in the server’s SQLite file and **only survive redeploys if** the host keeps a **persistent disk** (or `DATA_DIR`) for that database—see step 6 above for Render.
 
 3. **Domain**  
    The title and domain **flowring.shop** stay the same; only the code and content change when you push or edit in admin.

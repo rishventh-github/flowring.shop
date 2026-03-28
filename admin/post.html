@@ -167,8 +167,15 @@
         credentials: 'include',
         body: JSON.stringify(payload)
       }).then(function (r) {
-        if (r.ok) { setDirty(false); window.location.href = '/admin/'; }
-        else r.json().then(function (d) { alert(d.error || 'Error saving.'); });
+        if (r.ok) {
+          r.json().then(function (d) {
+            setDirty(false);
+            try {
+              sessionStorage.setItem('flowring_admin_saved', (d && d.message) || 'Saved.');
+            } catch (e) {}
+            window.location.href = '/admin/';
+          });
+        } else r.json().then(function (d) { alert(d.error || 'Error saving.'); });
       }).catch(function () { alert('Network error.'); });
     });
 
@@ -176,7 +183,14 @@
       if (!confirmLeaveIfDirty()) return;
       if (!confirm('Delete this post?')) return;
       fetch(API + '/admin/posts/' + postId, { method: 'DELETE', credentials: 'include' }).then(function (r) {
-        if (r.ok) { setDirty(false); window.location.href = '/admin/'; }
+        if (!r.ok) return;
+        r.json().then(function (d) {
+          setDirty(false);
+          try {
+            sessionStorage.setItem('flowring_admin_saved', (d && d.message) || 'Deleted.');
+          } catch (e) {}
+          window.location.href = '/admin/';
+        });
       });
     });
 

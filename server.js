@@ -10,10 +10,21 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'flowring-admin';
 
-const dataDir = path.join(__dirname, 'data');
+const dataDir =
+  process.env.DATA_DIR && String(process.env.DATA_DIR).trim()
+    ? path.resolve(String(process.env.DATA_DIR).trim())
+    : path.join(__dirname, 'data');
 if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 const dbPath = path.join(dataDir, 'flowring.db');
 const db = new Database(dbPath);
+
+const ADMIN_PERSIST_META = {
+  persisted: true,
+  message:
+    'Saved to the site database. With persistent storage for the data directory (e.g. Render disk mounted at `data`, or DATA_DIR), this survives redeploys and new server instances.',
+};
+
+console.log('[FlowRing] SQLite path:', dbPath);
 
 // Create tables and seed default content
 db.exec(`
@@ -113,7 +124,7 @@ const defaultContent = [
   { key: 'pricing.pack3.badge', value: 'Best value', type: 'text' },
   { key: 'pricing.pack3.title', value: 'FlowRing 3-Pack', type: 'text' },
   { key: 'pricing.pack3.desc', value: 'Kitchen + two bathrooms, or share with family. Save more, waste less.', type: 'text' },
-  { key: 'pricing.pack3.amount', value: '$59.99', type: 'text' },
+  { key: 'pricing.pack3.amount', value: '$54.99', type: 'text' },
   { key: 'pricing.pack3.unit', value: 'one-time', type: 'text' },
   { key: 'pricing.pack3.features', value: '<li>3× FlowRing devices</li><li>Clip-on installation</li><li>AI learning & LED feedback</li><li>No app or subscription</li>', type: 'text' },
   { key: 'pricing.note', value: 'Free shipping on orders over $75. No plumbing, no professional installation. Works on standard faucets.', type: 'text' },
@@ -128,7 +139,8 @@ defaultContent.forEach(({ key, value, type }) => insertBlock.run(key, value, typ
 // One-time-ish migrations for existing DB content values
 // (content-loader pulls from DB and will override HTML defaults)
 db.prepare("UPDATE content_blocks SET value = ? WHERE key = ? AND value = ?").run('$19.99', 'pricing.single.amount', '$49');
-db.prepare("UPDATE content_blocks SET value = ? WHERE key = ? AND value = ?").run('$59.99', 'pricing.pack3.amount', '$119');
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ? AND value = ?").run('$54.99', 'pricing.pack3.amount', '$119');
+db.prepare("UPDATE content_blocks SET value = ? WHERE key = ? AND value = ?").run('$54.99', 'pricing.pack3.amount', '$59.99');
 db.prepare("DELETE FROM content_blocks WHERE key = ?").run('pricing.pack3.savings');
 
 // Seed team members (only if empty)
@@ -227,7 +239,13 @@ app.post('/api/logout', (req, res) => {
 });
 
 app.get('/api/admin/me', (req, res) => {
-  res.json({ admin: isAdmin(req) });
+  const admin = isAdmin(req);
+  const payload = { admin };
+  if (admin) {
+    payload.persistenceHint =
+      'Changes you save are written to the server database. They persist across restarts and deploys when this service uses persistent storage for that database (see deployment docs: disk mount `data` or DATA_DIR).';
+  }
+  res.json(payload);
 });
 
 // Team (admin)
@@ -253,7 +271,7 @@ app.post('/api/admin/team', (req, res) => {
   const result = db.prepare('INSERT INTO team_members (name, role, bio, initials, photo_url, sort_order) VALUES (?, ?, ?, ?, ?, ?)').run(
     name, role, bio, computedInitials, photoUrl, finalSort
   );
-  res.status(201).json({ ok: true, id: result.lastInsertRowid });
+  res.status(201).json({ ok: true, id: result.lastInsertRowid, ...ADMIN_PERSIST_META });
 });
 
 app.put('/api/admin/team/:id', (req, res) => {
@@ -274,14 +292,19 @@ app.put('/api/admin/team/:id', (req, res) => {
   if (initials != null) db.prepare('UPDATE team_members SET initials = ? WHERE id = ?').run(initials, id);
   if (photoUrl != null) db.prepare('UPDATE team_members SET photo_url = ? WHERE id = ?').run(photoUrl, id);
   if (Number.isFinite(sortOrder)) db.prepare('UPDATE team_members SET sort_order = ? WHERE id = ?').run(sortOrder, id);
-  res.json({ ok: true });
+  res.json({ ok: true, ...ADMIN_PERSIST_META });
 });
 
 app.delete('/api/admin/team/:id', (req, res) => {
   if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
   const id = parseInt(req.params.id, 10);
   db.prepare('DELETE FROM team_members WHERE id = ?').run(id);
-  res.json({ ok: true });
+  res.json({
+    ok: true,
+    persisted: true,
+    message:
+      'Updated the site database. With persistent storage for the data directory, this survives redeploys and new server instances.',
+  });
 });
 
 // ——— Customer account ———
@@ -398,7 +421,7 @@ app.put('/api/admin/content', (req, res) => {
   if (!key) return res.status(400).json({ error: 'key required' });
   db.prepare('INSERT INTO content_blocks (key, value, type) VALUES (?, ?, ?) ON CONFLICT(key) DO UPDATE SET value = ?, type = ?')
     .run(key, value || '', type || 'text', value || '', type || 'text');
-  res.json({ ok: true });
+  res.json({ ok: true, ...ADMIN_PERSIST_META });
 });
 
 // ——— Admin: posts ———
@@ -411,7 +434,7 @@ app.post('/api/admin/posts', (req, res) => {
     const result = db.prepare(
       'INSERT INTO posts (title, slug, body, excerpt, published) VALUES (?, ?, ?, ?, ?)'
     ).run(title, slugClean, body, excerpt || '', published !== false ? 1 : 0);
-    res.status(201).json({ id: result.lastInsertRowid, slug: slugClean });
+    res.status(201).json({ id: result.lastInsertRowid, slug: slugClean, ...ADMIN_PERSIST_META });
   } catch (e) {
     if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') return res.status(400).json({ error: 'Slug already exists' });
     throw e;
@@ -438,14 +461,19 @@ app.put('/api/admin/posts/:id', (req, res) => {
   if (excerpt !== undefined) db.prepare('UPDATE posts SET excerpt = ? WHERE id = ?').run(excerpt || '', id);
   if (published !== undefined) db.prepare('UPDATE posts SET published = ? WHERE id = ?').run(published ? 1 : 0, id);
   db.prepare("UPDATE posts SET updated_at = datetime('now') WHERE id = ?").run(id);
-  res.json({ ok: true });
+  res.json({ ok: true, ...ADMIN_PERSIST_META });
 });
 
 app.delete('/api/admin/posts/:id', (req, res) => {
   if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
   const id = parseInt(req.params.id, 10);
   db.prepare('DELETE FROM posts WHERE id = ?').run(id);
-  res.json({ ok: true });
+  res.json({
+    ok: true,
+    persisted: true,
+    message:
+      'Updated the site database. With persistent storage for the data directory, this survives redeploys and new server instances.',
+  });
 });
 
 // Serve static files (HTML, CSS, JS, images) after API so /api/* is never served as files
