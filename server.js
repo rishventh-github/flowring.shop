@@ -395,6 +395,19 @@ app.delete('/api/admin/posts/:id', async (req, res) => {
   });
 });
 
+const publicDir = path.join(__dirname, 'public');
+
+function sendPublic(res, relPath) {
+  res.sendFile(path.join(publicDir, relPath));
+}
+
+// Vercel runs this Express app for every URL and ignores express.static().
+// public/ is also served from the CDN; these routes cover / and admin paths.
+app.get('/', (req, res) => sendPublic(res, 'index.html'));
+app.get(['/admin', '/admin/'], (req, res) => sendPublic(res, 'admin/index.html'));
+app.get('/admin/login', (req, res) => sendPublic(res, 'admin/login.html'));
+app.use(express.static(publicDir));
+
 // Ensure API errors always return JSON (no HTML)
 app.use(function (err, req, res, next) {
   if (req.originalUrl && req.originalUrl.indexOf('/api/') === 0) {
@@ -404,19 +417,7 @@ app.use(function (err, req, res, next) {
   next(err);
 });
 
-// Local-only: static files + admin HTML routes (Vercel serves these as static assets)
 if (require.main === module) {
-  app.use(express.static(__dirname));
-  app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin', 'index.html'));
-  });
-  app.get('/admin/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin', 'index.html'));
-  });
-  app.get('/admin/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin', 'login.html'));
-  });
-
   app.listen(PORT, () => {
     console.log('FlowRing server at http://localhost:' + PORT);
     console.log('Set ADMIN_PASSWORD in .env to secure the admin (default: flowring-admin)');

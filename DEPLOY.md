@@ -1,6 +1,6 @@
 # Deploy FlowRing as flowring.shop (Vercel)
 
-FlowRing runs on **Vercel**: static pages (HTML/CSS/JS/images) plus a serverless API for admin, blog, accounts, and cart.
+FlowRing runs on **Vercel**: pages and assets live in **`public/`** (served by Vercel’s CDN). The Express API handles `/api/*` (admin, blog, accounts, cart).
 
 Vercel has **no persistent local disk**, so the database must be **Turso** (hosted SQLite). Local `npm start` still uses a file at `data/flowring.db`.
 
@@ -8,14 +8,16 @@ Vercel has **no persistent local disk**, so the database must be **Turso** (host
 
 ## 1. Create a Turso database (required for production)
 
-1. Sign up at [turso.tech](https://turso.tech) and install the CLI if you want:
+1. Sign up at [turso.tech](https://turso.tech) and install the CLI (Homebrew often fails on the `libsql/sqld` tap — use the official installer instead):
    ```bash
-   brew install tursodatabase/tap/turso
+   curl -sSfL https://get.tur.so/install.sh | bash
+   source ~/.zshrc
    turso auth login
    turso db create flowring
    turso db show flowring --url
    turso db tokens create flowring
    ```
+   If `turso` is still “command not found”, open a **new** terminal tab, or run `export PATH="$HOME/.turso:$PATH"` first.
 2. Copy:
    - **`TURSO_DATABASE_URL`** — looks like `libsql://flowring-….turso.io`
    - **`TURSO_AUTH_TOKEN`** — the token you created

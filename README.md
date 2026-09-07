@@ -6,7 +6,7 @@ This is the marketing website for FlowRing, a compact AI-powered device that att
 
 ## Pages
 
-- **Home** (`index.html`) — Hero, how it works, why we’re different, impact
+- **Home** (`public/index.html`) — Hero, how it works, why we’re different, impact
 - **About** (`about.html`) — Mission, how it works, why we’re different
 - **Team** (`team.html`) — Team member cards
 - **Gallery** (`gallery.html`) — Product and in-use image placeholders
