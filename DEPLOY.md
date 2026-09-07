@@ -1,92 +1,101 @@
-# Deploy FlowRing as flowring.shop
+# Deploy FlowRing as flowring.shop (Vercel)
 
-You can deploy this site so it’s live on the internet and use the domain **flowring.shop**. After deployment, you can still change the website anytime (see bottom).
+FlowRing runs on **Vercel**: static pages (HTML/CSS/JS/images) plus a serverless API for admin, blog, accounts, and cart.
 
----
-
-## Option 1: Render (recommended)
-
-Render runs your Node server, keeps SQLite data on a disk, and supports a custom domain.
-
-### 1. Push your code to GitHub
-
-- Create a repo at [github.com/new](https://github.com/new) (e.g. `flowring-shop`).
-- Push your project:
-  ```bash
-  git init
-  git add .
-  git commit -m "FlowRing site"
-  git branch -M main
-  git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
-  git push -u origin main
-  ```
-
-### 2. Deploy on Render
-
-1. Go to [render.com](https://render.com) and sign up (or log in).
-2. **New → Web Service**.
-3. Connect your GitHub repo and select this project.
-4. Use:
-   - **Build command:** `npm install`
-   - **Start command:** `npm start`
-   - **Instance type:** Free (or paid if you need more).
-5. Under **Environment**, add:
-   - `ADMIN_PASSWORD` — pick a strong password (for `/admin/login`).
-   - `SESSION_SECRET` — random string (e.g. from [randomkeygen.com](https://randomkeygen.com)).
-6. Under **Disks**, add a disk:
-   - Name: `flowring-data`
-   - Mount path: `data` (must match the app: SQLite is stored at `data/flowring.db` unless you override `DATA_DIR`)
-   - Size: 1 GB  
-   Without this disk, the filesystem is **ephemeral**: every deploy or restart creates a **new empty database** and admin changes look “lost.” After the service exists, open **Settings → Disks** and confirm the disk is attached (Blueprint-created services usually have it already).  
-   **Note:** On Render, **persistent disks require a paid instance type**—free web services cannot attach a disk, so SQLite on the default ephemeral filesystem will reset. Upgrade the instance (or use an external database) if you need admin edits to survive deploys.
-7. Optional: if your disk is mounted somewhere else, set environment variable **`DATA_DIR`** to that **absolute** path so `flowring.db` is written on the volume.
-8. Click **Create Web Service**. Wait for the first deploy to finish.
-9. Your site will be at `https://YOUR_SERVICE_NAME.onrender.com`.
-
-### 3. Use flowring.shop as the domain
-
-1. **Buy the domain** (if you don’t own it yet) from a registrar (e.g. Namecheap, Google Domains, Cloudflare).
-2. In **Render dashboard → your service → Settings → Custom Domains**:
-   - Add custom domain: `flowring.shop`
-   - Also add `www.flowring.shop` if you want.
-3. Render will show **CNAME** (and sometimes A) records. In your domain registrar’s DNS:
-   - For `flowring.shop`: add the CNAME or A record Render gives you.
-   - For `www.flowring.shop`: CNAME to the host Render shows (e.g. `YOUR_SERVICE_NAME.onrender.com`).
-4. Wait for DNS to propagate (minutes to a few hours). Render will issue HTTPS for flowring.shop.
-
-Your live site will be **https://flowring.shop** (and optionally **https://www.flowring.shop**).
+Vercel has **no persistent local disk**, so the database must be **Turso** (hosted SQLite). Local `npm start` still uses a file at `data/flowring.db`.
 
 ---
 
-## Option 2: Railway
+## 1. Create a Turso database (required for production)
 
-1. Go to [railway.app](https://railway.app) and connect GitHub.
-2. **New Project → Deploy from GitHub** and select this repo.
-3. Add **Variables:** `ADMIN_PASSWORD`, `SESSION_SECRET`.
-4. Railway will assign a URL. Under **Settings → Domains**, add **flowring.shop** and point your domain’s DNS (CNAME) to the host Railway shows.
+1. Sign up at [turso.tech](https://turso.tech) and install the CLI if you want:
+   ```bash
+   brew install tursodatabase/tap/turso
+   turso auth login
+   turso db create flowring
+   turso db show flowring --url
+   turso db tokens create flowring
+   ```
+2. Copy:
+   - **`TURSO_DATABASE_URL`** — looks like `libsql://flowring-….turso.io`
+   - **`TURSO_AUTH_TOKEN`** — the token you created
+
+You can also create Turso from the [Vercel Marketplace → Turso](https://vercel.com/marketplace/tursocloud/database) and it will inject these env vars.
 
 ---
 
-## Option 3: Fly.io
+## 2. Push your code to GitHub
 
-1. Install [flyctl](https://fly.io/docs/hands-on/install-flyctl/) and run `fly launch` in the project folder.
-2. Add a **volume** for the `data` folder so SQLite persists (see [Fly volumes](https://fly.io/docs/reference/volumes/)).
-3. Set secrets: `fly secrets set ADMIN_PASSWORD=xxx SESSION_SECRET=xxx`
-4. Add custom domain: **fly.io dashboard → your app → Certificates** and add flowring.shop; then set the DNS record Fly shows.
+If the repo is already on GitHub, skip this. Otherwise:
+
+```bash
+git add .
+git commit -m "Deploy FlowRing on Vercel"
+git push -u origin main
+```
+
+---
+
+## 3. Deploy on Vercel
+
+1. Go to [vercel.com](https://vercel.com) and sign in (GitHub is easiest).
+2. **Add New… → Project** and import **`rishventh-github/flowring.shop`** (or your fork).
+3. Framework preset: **Other** (static + Node API). Build/install can stay default (`npm install`).
+4. Under **Environment Variables**, add:
+
+   | Name | Value |
+   |------|--------|
+   | `ADMIN_PASSWORD` | Strong password for `/admin/login` |
+   | `SESSION_SECRET` | Long random string |
+   | `TURSO_DATABASE_URL` | From Turso |
+   | `TURSO_AUTH_TOKEN` | From Turso |
+
+5. Click **Deploy**. When it finishes, open the `*.vercel.app` URL.
+6. Confirm:
+   - Home page loads
+   - `/api/content` returns JSON
+   - `/admin/login` accepts your `ADMIN_PASSWORD`
+   - Saving in admin shows the persistence toast (data is in Turso)
+
+Schema and default content are created automatically on first API request.
+
+---
+
+## 4. Use flowring.shop as the domain
+
+1. In **Vercel → Project → Settings → Domains**, add `flowring.shop` and `www.flowring.shop` if you want.
+2. At your DNS provider, add the records Vercel shows (usually **A** / **CNAME**).
+3. Wait for DNS + HTTPS (often a few minutes).
+
+Your live site will be **https://flowring.shop**.
+
+---
+
+## Local development
+
+```bash
+npm install
+cp .env.example .env
+# Set ADMIN_PASSWORD and SESSION_SECRET (Turso vars optional locally)
+npm start
+```
+
+Without Turso env vars, the app uses **`data/flowring.db`**. To test against the same DB as production, put `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` in `.env`.
+
+---
+
+## Turning off Render (if you still have it)
+
+1. In the Render dashboard, **suspend** or **delete** the old web service so it stops competing for DNS.
+2. Point **flowring.shop** DNS to **Vercel** (remove old Render CNAME/A records).
+3. You can delete `render.yaml` from the repo once you no longer need it (optional).
 
 ---
 
 ## Can I still change the website after it’s deployed?
 
-**Yes.** You can change the site whenever you want:
+**Yes.**
 
-1. **Code/content changes**  
-   Edit the repo (HTML, CSS, JS, server, etc.), commit, and push to the branch you deploy from (e.g. `main`). Render/Railway/Fly will redeploy automatically if you have “auto-deploy” on.
-
-2. **Content via admin**  
-   If the Node server is deployed, use **https://flowring.shop/admin/login** to edit content blocks and blog posts. Those changes apply immediately; no redeploy needed. They are stored in the server’s SQLite file and **only survive redeploys if** the host keeps a **persistent disk** (or `DATA_DIR`) for that database—see step 6 above for Render.
-
-3. **Domain**  
-   The title and domain **flowring.shop** stay the same; only the code and content change when you push or edit in admin.
-
-So: deploy once, set the title/domain to flowring.shop, then keep updating the site as needed.
+1. **Code** — Edit, commit, push to `main`. Vercel redeploys automatically.
+2. **Admin content** — Use **https://flowring.shop/admin/login**. Saves go to **Turso** and survive every deploy.
+3. **Domain** — Stay on flowring.shop; only hosting moves to Vercel.

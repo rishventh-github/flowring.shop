@@ -34,6 +34,8 @@ To **write and post blogs** and **edit site content** (text, images) as admin:
 
 **Security:** Only you have access to the admin. Set a strong `ADMIN_PASSWORD` in `.env` and keep `.env` out of version control.
 
+Locally, data lives in **`data/flowring.db`**. On **Vercel**, set **`TURSO_DATABASE_URL`** and **`TURSO_AUTH_TOKEN`** so admin changes persist (see [DEPLOY.md](DEPLOY.md)).
+
 ## Run locally (static only)
 
 Without the Node server you can still open the site, but:
@@ -55,10 +57,10 @@ Then visit `http://localhost:8000`.
 
 ## Deploy (and use flowring.shop)
 
-**Full steps to go live with the domain flowring.shop:** see **[DEPLOY.md](DEPLOY.md)**.
+**Full steps (Vercel + Turso + custom domain):** see **[DEPLOY.md](DEPLOY.md)**.
 
-- **Static only:** Upload the folder to any static host. Blog, account, and editable content will not work unless you run the Node server elsewhere.
-- **With blog + admin + account:** Deploy to a host that runs Node (e.g. **Render**, Railway, Fly.io). Set `ADMIN_PASSWORD` and `SESSION_SECRET` in the environment. Add a persistent disk for the `data` folder so SQLite and sessions persist. Then add your custom domain **flowring.shop** in the host’s dashboard and point DNS there.
+- **Static only:** Upload the folder to any static host. Blog, account, and editable content will not work unless the API runs elsewhere.
+- **With blog + admin + account:** Deploy to **Vercel**, attach a **Turso** database, and set `ADMIN_PASSWORD`, `SESSION_SECRET`, `TURSO_DATABASE_URL`, and `TURSO_AUTH_TOKEN`. Then add **flowring.shop** in Vercel Domains and point DNS there.
 
 ## Customize
 
@@ -70,4 +72,4 @@ Then visit `http://localhost:8000`.
 ## Tech
 
 - **Front:** HTML, CSS, vanilla JS (nav, scroll-reveal, page transitions, content loader, blog list/post).
-- **Back (optional):** Node.js, Express, SQLite (better-sqlite3), express-session. One admin password in env; content blocks and posts stored in `data/flowring.db`.
+- **Back:** Node.js, Express, libSQL (`@libsql/client`), cookie-session. Local file SQLite or **Turso** in production. Admin password in env; content and posts in the database.
