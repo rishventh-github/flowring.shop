@@ -51,6 +51,8 @@ git push -u origin main
    | `SESSION_SECRET` | Long random string |
    | `TURSO_DATABASE_URL` | From Turso |
    | `TURSO_AUTH_TOKEN` | From Turso |
+   | `CONTACT_TO_EMAIL` | Optional. Defaults to `rishenth.ramoshan@gmail.com` (contact form) |
+   | `RESEND_API_KEY` | Optional. More reliable contact emails; otherwise FormSubmit is used |
 
 5. Click **Deploy**. When it finishes, open the `*.vercel.app` URL.
 6. Confirm:

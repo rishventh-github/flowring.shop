@@ -31,6 +31,60 @@ app.use(
 );
 
 const ADMIN_EMAIL = 'rishventh.r@gmail.com';
+const CONTACT_TO = process.env.CONTACT_TO_EMAIL || 'rishenth.ramoshan@gmail.com';
+
+async function sendContactEmail({ name, interest, message }) {
+  const subject = `FlowRing interest: ${interest} — ${name}`;
+  const text =
+    `Name: ${name}\n` +
+    `Interested in FlowRing: ${interest}\n\n` +
+    `Question / comment:\n${message || '(none)'}`;
+  const html =
+    `<p><strong>Name:</strong> ${escapeHtml(name)}</p>` +
+    `<p><strong>Interested in FlowRing:</strong> ${escapeHtml(interest)}</p>` +
+    `<p><strong>Question / comment:</strong></p>` +
+    `<p>${escapeHtml(message || '(none)').replace(/\n/g, '<br>')}</p>`;
+
+  if (process.env.RESEND_API_KEY) {
+    const r = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + process.env.RESEND_API_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: process.env.RESEND_FROM || 'FlowRing <onboarding@resend.dev>',
+        to: [CONTACT_TO],
+        subject,
+        text,
+        html,
+      }),
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return 'resend';
+  }
+
+  const r = await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(CONTACT_TO), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({
+      name,
+      interest,
+      message: message || '(none)',
+      _subject: subject,
+    }),
+  });
+  if (!r.ok) throw new Error('Email delivery failed');
+  return 'formsubmit';
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
 
 function isAdmin(req) {
   if (!req.session) return false;
@@ -101,6 +155,37 @@ app.get('/api/posts/:slug', async (req, res) => {
   if (!row) return res.status(404).json({ error: 'Not found' });
   if (!row.published && !isAdmin(req)) return res.status(404).json({ error: 'Not found' });
   res.json(row);
+});
+
+app.post('/api/contact', async (req, res) => {
+  const body = req.body && typeof req.body === 'object' ? req.body : {};
+  if (body.website) return res.json({ ok: true }); // honeypot
+  const name = body.name != null ? String(body.name).trim() : '';
+  const interest = body.interest != null ? String(body.interest).trim().toLowerCase() : '';
+  const message = body.message != null ? String(body.message).trim() : '';
+  if (!name) return res.status(400).json({ error: 'Name is required' });
+  if (!['yes', 'maybe', 'no'].includes(interest)) {
+    return res.status(400).json({ error: 'Please choose Yes, Maybe, or No' });
+  }
+  if (name.length > 200 || message.length > 4000) {
+    return res.status(400).json({ error: 'That response is too long' });
+  }
+  await db.run('INSERT INTO contact_submissions (name, interest, message) VALUES (?, ?, ?)', [
+    name,
+    interest,
+    message,
+  ]);
+  try {
+    await sendContactEmail({ name, interest, message });
+    return res.status(201).json({ ok: true, emailed: true });
+  } catch (err) {
+    console.error('Contact email error:', err);
+    return res.status(201).json({
+      ok: true,
+      emailed: false,
+      error: 'Saved, but the notification email could not be sent. We still have your message.',
+    });
+  }
 });
 
 // ——— Auth ———

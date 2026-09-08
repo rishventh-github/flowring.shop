@@ -13,7 +13,7 @@
 <body>
   <header class="site-header">
     <div class="container">
-      <a href="index.html" class="logo">Flow<span>Ring</span></a>
+      <a href="index.html" class="logo"><img src="images/flowring-logo.png" alt="FlowRing.ai"></a>
       <button type="button" class="nav-toggle" aria-label="Open menu">
         <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
@@ -27,6 +27,7 @@
             <li><a href="blogs.html">Blog</a></li>
             <li><a href="reviews.html">Reviews</a></li>
             <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="contact.html">Contact</a></li>
             <li id="nav-account-item"><a href="account.html">Account</a></li>
           </ul>
         </nav>
@@ -150,6 +151,34 @@
         <p class="section-cta reveal-child reveal-child--delay-5"><a href="pricing.html" class="btn btn-primary">See pricing</a></p>
       </div>
     </section>
+
+    <section class="section section--alt" id="contact">
+      <div class="container scroll-reveal">
+        <h2 class="section-title reveal-child reveal-child--delay-1">Contact me</h2>
+        <p class="subtitle reveal-child reveal-child--delay-2">Interested in FlowRing? Send a quick note — I’ll get your message by email.</p>
+        <form class="contact-form reveal-child reveal-child--delay-3" data-contact-form novalidate>
+          <label class="contact-form__label" for="contact-name-home">Name</label>
+          <input class="contact-form__input" id="contact-name-home" name="name" type="text" required maxlength="200" autocomplete="name" placeholder="Your name">
+
+          <fieldset class="contact-form__fieldset">
+            <legend class="contact-form__label">Are you interested in FlowRing?</legend>
+            <div class="contact-form__choices">
+              <label><input type="radio" name="interest" value="yes" required> Yes</label>
+              <label><input type="radio" name="interest" value="maybe"> Maybe</label>
+              <label><input type="radio" name="interest" value="no"> No</label>
+            </div>
+          </fieldset>
+
+          <label class="contact-form__label" for="contact-message-home">Question, comment, or suggestion</label>
+          <textarea class="contact-form__input contact-form__textarea" id="contact-message-home" name="message" maxlength="4000" rows="5" placeholder="Ask a question or share a comment…"></textarea>
+
+          <input type="text" name="website" class="contact-form__hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+          <button type="submit" class="btn btn-primary">Send message</button>
+          <p class="contact-form__status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
   </main>
 
   <footer class="site-footer">
@@ -169,6 +198,7 @@
             <li><a href="about.html">About</a></li>
             <li><a href="team.html">Team</a></li>
             <li><a href="reviews.html">Reviews</a></li>
+            <li><a href="contact.html">Contact</a></li>
           </ul>
         </div>
         <div>
@@ -187,5 +217,6 @@
   <script src="js/main.js"></script>
   <script src="js/content-loader.js"></script>
   <script src="js/account-header.js"></script>
+  <script src="js/contact-form.js"></script>
 </body>
 </html>

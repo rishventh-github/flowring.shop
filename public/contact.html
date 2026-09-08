@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pricing — FlowRing | flowring.shop</title>
-  <meta name="description" content="Get FlowRing — affordable, no-plumbing water conservation. Single unit and multi-pack pricing.">
+  <title>Contact — FlowRing | flowring.shop</title>
+  <meta name="description" content="Tell us if you’re interested in FlowRing and send a question or suggestion.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
@@ -27,7 +27,7 @@
             <li><a href="blogs.html">Blog</a></li>
             <li><a href="reviews.html">Reviews</a></li>
             <li><a href="pricing.html">Pricing</a></li>
-            <li><a href="contact.html">Contact</a></li>
+            <li><a href="contact.html" aria-current="page">Contact</a></li>
             <li id="nav-account-item"><a href="account.html">Account</a></li>
           </ul>
         </nav>
@@ -47,51 +47,33 @@
   <main class="page-enter">
     <section class="page-hero">
       <div class="container">
-        <h1 class="section-title" data-content-key="pricing.title">Pricing</h1>
-        <p class="subtitle" data-content-key="pricing.subtitle">Affordable, accessible water conservation. No subscription — just attach and save.</p>
+        <h1 class="section-title">Contact me</h1>
+        <p class="subtitle">Say whether you’re interested in FlowRing and ask a question or leave a comment. I’ll get your response by email.</p>
       </div>
     </section>
-
     <section class="section">
       <div class="container">
-        <div class="pricing-grid">
-          <article class="pricing-card">
-            <div class="pricing-card__img pricing-card__img--single" aria-hidden="true"></div>
-            <h2 class="pricing-card__title" data-content-key="pricing.single.title">FlowRing Single</h2>
-            <p class="pricing-card__desc" data-content-key="pricing.single.desc">One device for one faucet. Perfect to try FlowRing or cover your most-used tap.</p>
-            <div class="pricing-card__price">
-              <span class="pricing-card__amount" data-content-key="pricing.single.amount">$19.99</span>
-              <span class="pricing-card__unit" data-content-key="pricing.single.unit">one-time</span>
-            </div>
-            <ul class="pricing-card__features" data-content-key="pricing.single.features">
-              <li>1× FlowRing device</li>
-              <li>Clip-on installation</li>
-              <li>AI learning & LED feedback</li>
-              <li>No app or subscription</li>
-            </ul>
-            <a href="#" class="btn btn-primary pricing-card__cta btn-soon" data-cart-add="flowring-single" aria-disabled="true">Add to cart</a>
-          </article>
+        <form class="contact-form" data-contact-form novalidate>
+          <label class="contact-form__label" for="contact-name">Name</label>
+          <input class="contact-form__input" id="contact-name" name="name" type="text" required maxlength="200" autocomplete="name" placeholder="Your name">
 
-          <article class="pricing-card pricing-card--featured">
-            <span class="pricing-card__badge" data-content-key="pricing.pack3.badge">Best value</span>
-            <div class="pricing-card__img pricing-card__img--pack" aria-hidden="true"></div>
-            <h2 class="pricing-card__title" data-content-key="pricing.pack3.title">FlowRing 3-Pack</h2>
-            <p class="pricing-card__desc" data-content-key="pricing.pack3.desc">Kitchen + two bathrooms, or share with family. Save more, waste less.</p>
-            <div class="pricing-card__price">
-              <span class="pricing-card__amount" data-content-key="pricing.pack3.amount">$54.99</span>
-              <span class="pricing-card__unit" data-content-key="pricing.pack3.unit">one-time</span>
+          <fieldset class="contact-form__fieldset">
+            <legend class="contact-form__label">Are you interested in FlowRing?</legend>
+            <div class="contact-form__choices">
+              <label><input type="radio" name="interest" value="yes" required> Yes</label>
+              <label><input type="radio" name="interest" value="maybe"> Maybe</label>
+              <label><input type="radio" name="interest" value="no"> No</label>
             </div>
-            <ul class="pricing-card__features" data-content-key="pricing.pack3.features">
-              <li>3× FlowRing devices</li>
-              <li>Clip-on installation</li>
-              <li>AI learning & LED feedback</li>
-              <li>No app or subscription</li>
-            </ul>
-            <a href="#" class="btn btn-primary pricing-card__cta btn-soon" data-cart-add="flowring-3pack" aria-disabled="true">Add to cart</a>
-          </article>
+          </fieldset>
 
-        </div>
-        <p class="pricing-note" data-content-key="pricing.note">Free shipping on orders over $75. No plumbing, no professional installation. Works on standard faucets.</p>
+          <label class="contact-form__label" for="contact-message">Question, comment, or suggestion</label>
+          <textarea class="contact-form__input contact-form__textarea" id="contact-message" name="message" maxlength="4000" rows="6" placeholder="Ask a question or share a comment…"></textarea>
+
+          <input type="text" name="website" class="contact-form__hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+          <button type="submit" class="btn btn-primary">Send message</button>
+          <p class="contact-form__status" role="status" aria-live="polite"></p>
+        </form>
       </div>
     </section>
   </main>
@@ -131,7 +113,7 @@
   </footer>
   <script src="js/main.js"></script>
   <script src="js/content-loader.js"></script>
-  <script src="js/cart-soon.js"></script>
   <script src="js/account-header.js"></script>
+  <script src="js/contact-form.js"></script>
 </body>
 </html>
