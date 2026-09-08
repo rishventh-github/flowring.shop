@@ -27,17 +27,29 @@
 
       fetch('/api/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        credentials: 'same-origin',
         body: JSON.stringify({ name: name, interest: interest, message: message, website: honeypot })
       })
-        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+        .then(function (r) {
+          return r.text().then(function (text) {
+            var data = {};
+            if (text) {
+              try { data = JSON.parse(text); } catch (err) { data = { error: text.slice(0, 180) }; }
+            }
+            return { ok: r.ok, data: data };
+          });
+        })
         .then(function (res) {
           if (!res.ok) {
             setStatus((res.data && res.data.error) || 'Could not send. Please try again.', true);
             return;
           }
           form.reset();
-          setStatus('Thanks — your message was sent. I’ll follow up by email.', false);
+          setStatus(
+            (res.data && res.data.message) || 'Thanks — your message was sent. I’ll follow up by email.',
+            false
+          );
         })
         .catch(function () {
           setStatus('Network error. Please try again.', true);

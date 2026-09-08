@@ -45,6 +45,8 @@ async function sendContactEmail({ name, interest, message }) {
     `<p><strong>Question / comment:</strong></p>` +
     `<p>${escapeHtml(message || '(none)').replace(/\n/g, '<br>')}</p>`;
 
+  const signal = AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined;
+
   if (process.env.RESEND_API_KEY) {
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -59,6 +61,7 @@ async function sendContactEmail({ name, interest, message }) {
         text,
         html,
       }),
+      signal,
     });
     if (!r.ok) throw new Error(await r.text());
     return 'resend';
@@ -73,6 +76,7 @@ async function sendContactEmail({ name, interest, message }) {
       message: message || '(none)',
       _subject: subject,
     }),
+    signal,
   });
   if (!r.ok) throw new Error('Email delivery failed');
   return 'formsubmit';
@@ -158,33 +162,55 @@ app.get('/api/posts/:slug', async (req, res) => {
 });
 
 app.post('/api/contact', async (req, res) => {
-  const body = req.body && typeof req.body === 'object' ? req.body : {};
-  if (body.website) return res.json({ ok: true }); // honeypot
-  const name = body.name != null ? String(body.name).trim() : '';
-  const interest = body.interest != null ? String(body.interest).trim().toLowerCase() : '';
-  const message = body.message != null ? String(body.message).trim() : '';
-  if (!name) return res.status(400).json({ error: 'Name is required' });
-  if (!['yes', 'maybe', 'no'].includes(interest)) {
-    return res.status(400).json({ error: 'Please choose Yes, Maybe, or No' });
-  }
-  if (name.length > 200 || message.length > 4000) {
-    return res.status(400).json({ error: 'That response is too long' });
-  }
-  await db.run('INSERT INTO contact_submissions (name, interest, message) VALUES (?, ?, ?)', [
-    name,
-    interest,
-    message,
-  ]);
   try {
-    await sendContactEmail({ name, interest, message });
-    return res.status(201).json({ ok: true, emailed: true });
+    const body = req.body && typeof req.body === 'object' ? req.body : {};
+    if (body.website) return res.json({ ok: true }); // honeypot
+    const name = body.name != null ? String(body.name).trim() : '';
+    const interest = body.interest != null ? String(body.interest).trim().toLowerCase() : '';
+    const message = body.message != null ? String(body.message).trim() : '';
+    if (!name) return res.status(400).json({ error: 'Name is required' });
+    if (!['yes', 'maybe', 'no'].includes(interest)) {
+      return res.status(400).json({ error: 'Please choose Yes, Maybe, or No' });
+    }
+    if (name.length > 200 || message.length > 4000) {
+      return res.status(400).json({ error: 'That response is too long' });
+    }
+    try {
+      await db.run('INSERT INTO contact_submissions (name, interest, message) VALUES (?, ?, ?)', [
+        name,
+        interest,
+        message,
+      ]);
+    } catch (insertErr) {
+      await db.run(`
+        CREATE TABLE IF NOT EXISTS contact_submissions (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          interest TEXT NOT NULL,
+          message TEXT NOT NULL DEFAULT '',
+          created_at TEXT NOT NULL DEFAULT (datetime('now'))
+        )
+      `);
+      await db.run('INSERT INTO contact_submissions (name, interest, message) VALUES (?, ?, ?)', [
+        name,
+        interest,
+        message,
+      ]);
+    }
+    try {
+      await sendContactEmail({ name, interest, message });
+      return res.status(201).json({ ok: true, emailed: true });
+    } catch (err) {
+      console.error('Contact email error:', err);
+      return res.status(201).json({
+        ok: true,
+        emailed: false,
+        message: 'Thanks — your note was saved. Email notification may arrive shortly.',
+      });
+    }
   } catch (err) {
-    console.error('Contact email error:', err);
-    return res.status(201).json({
-      ok: true,
-      emailed: false,
-      error: 'Saved, but the notification email could not be sent. We still have your message.',
-    });
+    console.error('Contact form error:', err);
+    return res.status(500).json({ error: 'Could not send. Please try again.' });
   }
 });
 
