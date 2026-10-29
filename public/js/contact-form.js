@@ -5,13 +5,14 @@
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      var name = (form.querySelector('[name="name"]') || {}).value;
-      name = name ? String(name).trim() : '';
+      var nameEl = form.querySelector('[name="name"]');
+      var name = nameEl && nameEl.value ? String(nameEl.value).trim() : '';
       var interestEl = form.querySelector('[name="interest"]:checked');
       var interest = interestEl ? interestEl.value : '';
       var messageEl = form.querySelector('[name="message"]');
       var message = messageEl ? String(messageEl.value).trim() : '';
-      var honeypot = (form.querySelector('[name="website"]') || {}).value || '';
+      var honeypotEl = form.querySelector('[name="website"]');
+      var honeypot = honeypotEl && honeypotEl.value ? honeypotEl.value : '';
 
       if (!name) {
         setStatus('Please enter your name.', true);
@@ -22,27 +23,36 @@
         return;
       }
 
-      btn.disabled = true;
+      if (btn) btn.disabled = true;
       setStatus('Sending…', false);
+
+      var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      var timer = setTimeout(function () {
+        if (controller) controller.abort();
+      }, 15000);
 
       fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify({ name: name, interest: interest, message: message, website: honeypot })
+        body: JSON.stringify({ name: name, interest: interest, message: message, website: honeypot }),
+        signal: controller ? controller.signal : undefined
       })
         .then(function (r) {
           return r.text().then(function (text) {
             var data = {};
             if (text) {
-              try { data = JSON.parse(text); } catch (err) { data = { error: text.slice(0, 180) }; }
+              try {
+                data = JSON.parse(text);
+              } catch (err) {
+                data = { error: text.slice(0, 180) };
+              }
             }
-            return { ok: r.ok, data: data };
+            return { ok: r.ok, status: r.status, data: data };
           });
         })
         .then(function (res) {
           if (!res.ok) {
-            setStatus((res.data && res.data.error) || 'Could not send. Please try again.', true);
+            setStatus((res.data && res.data.error) || ('Could not send (HTTP ' + res.status + '). Please try again.'), true);
             return;
           }
           form.reset();
@@ -51,11 +61,18 @@
             false
           );
         })
-        .catch(function () {
-          setStatus('Network error. Please try again.', true);
+        .catch(function (err) {
+          var aborted = err && err.name === 'AbortError';
+          setStatus(
+            aborted
+              ? 'That took too long. Please refresh and try again (use the Vercel site if flowring.shop still points at Render).'
+              : 'Network error. Please try again. If this keeps happening, open the site from your Vercel URL while DNS moves off Render.',
+            true
+          );
         })
         .then(function () {
-          btn.disabled = false;
+          clearTimeout(timer);
+          if (btn) btn.disabled = false;
         });
     });
 

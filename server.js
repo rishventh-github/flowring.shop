@@ -33,6 +33,22 @@ app.use(
 const ADMIN_EMAIL = 'rishventh.r@gmail.com';
 const CONTACT_TO = process.env.CONTACT_TO_EMAIL || 'rishenth.ramoshan@gmail.com';
 
+function withTimeout(promise, ms) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('timeout')), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (err) => {
+        clearTimeout(timer);
+        reject(err);
+      }
+    );
+  });
+}
+
 async function sendContactEmail({ name, interest, message }) {
   const subject = `FlowRing interest: ${interest} — ${name}`;
   const text =
@@ -44,8 +60,6 @@ async function sendContactEmail({ name, interest, message }) {
     `<p><strong>Interested in FlowRing:</strong> ${escapeHtml(interest)}</p>` +
     `<p><strong>Question / comment:</strong></p>` +
     `<p>${escapeHtml(message || '(none)').replace(/\n/g, '<br>')}</p>`;
-
-  const signal = AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined;
 
   if (process.env.RESEND_API_KEY) {
     const r = await fetch('https://api.resend.com/emails', {
@@ -61,23 +75,26 @@ async function sendContactEmail({ name, interest, message }) {
         text,
         html,
       }),
-      signal,
     });
     if (!r.ok) throw new Error(await r.text());
     return 'resend';
   }
 
-  const r = await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(CONTACT_TO), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({
-      name,
-      interest,
-      message: message || '(none)',
-      _subject: subject,
+  // FormSubmit can hang or wait for inbox confirmation — keep a short hard timeout.
+  const r = await withTimeout(
+    fetch('https://formsubmit.co/ajax/' + encodeURIComponent(CONTACT_TO), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        name,
+        interest,
+        message: message || '(none)',
+        _subject: subject,
+        _template: 'table',
+      }),
     }),
-    signal,
-  });
+    2500
+  );
   if (!r.ok) throw new Error('Email delivery failed');
   return 'formsubmit';
 }
@@ -197,17 +214,21 @@ app.post('/api/contact', async (req, res) => {
         message,
       ]);
     }
+    // Always respond after the DB write so the browser never hangs on email providers.
+    let emailed = false;
     try {
-      await sendContactEmail({ name, interest, message });
-      return res.status(201).json({ ok: true, emailed: true });
+      await withTimeout(sendContactEmail({ name, interest, message }), 3000);
+      emailed = true;
     } catch (err) {
-      console.error('Contact email error:', err);
-      return res.status(201).json({
-        ok: true,
-        emailed: false,
-        message: 'Thanks — your note was saved. Email notification may arrive shortly.',
-      });
+      console.error('Contact email error:', err && err.message ? err.message : err);
     }
+    return res.status(201).json({
+      ok: true,
+      emailed,
+      message: emailed
+        ? 'Thanks — your message was sent. I’ll follow up by email.'
+        : 'Thanks — your note was saved. I’ll follow up soon (email notification may arrive shortly).',
+    });
   } catch (err) {
     console.error('Contact form error:', err);
     return res.status(500).json({ error: 'Could not send. Please try again.' });

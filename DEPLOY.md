@@ -1,14 +1,14 @@
 # Deploy FlowRing as flowring.shop (Vercel)
 
-FlowRing runs on **Vercel**: pages and assets live in **`public/`** (served by Vercel’s CDN). The Express API handles `/api/*` (admin, blog, accounts, cart).
+FlowRing is hosted on **Vercel** (not Render). Pages live in **`public/`**. The Express API handles `/api/*` (admin, blog, accounts, cart, contact).
 
-Vercel has **no persistent local disk**, so the database must be **Turso** (hosted SQLite). Local `npm start` still uses a file at `data/flowring.db`.
+Vercel has **no persistent local disk**, so production data uses **Turso** (hosted SQLite). Local `npm start` still uses `data/flowring.db`.
 
 ---
 
 ## 1. Create a Turso database (required for production)
 
-1. Sign up at [turso.tech](https://turso.tech) and install the CLI (Homebrew often fails on the `libsql/sqld` tap — use the official installer instead):
+1. Sign up at [turso.tech](https://turso.tech) and install the CLI:
    ```bash
    curl -sSfL https://get.tur.so/install.sh | bash
    source ~/.zshrc
@@ -17,33 +17,19 @@ Vercel has **no persistent local disk**, so the database must be **Turso** (host
    turso db show flowring --url
    turso db tokens create flowring
    ```
-   If `turso` is still “command not found”, open a **new** terminal tab, or run `export PATH="$HOME/.turso:$PATH"` first.
 2. Copy:
    - **`TURSO_DATABASE_URL`** — looks like `libsql://flowring-….turso.io`
    - **`TURSO_AUTH_TOKEN`** — the token you created
 
-You can also create Turso from the [Vercel Marketplace → Turso](https://vercel.com/marketplace/tursocloud/database) and it will inject these env vars.
+You can also create Turso from the [Vercel Marketplace → Turso](https://vercel.com/marketplace/tursocloud/database).
 
 ---
 
-## 2. Push your code to GitHub
+## 2. Deploy on Vercel
 
-If the repo is already on GitHub, skip this. Otherwise:
-
-```bash
-git add .
-git commit -m "Deploy FlowRing on Vercel"
-git push -u origin main
-```
-
----
-
-## 3. Deploy on Vercel
-
-1. Go to [vercel.com](https://vercel.com) and sign in (GitHub is easiest).
-2. **Add New… → Project** and import **`rishventh-github/flowring.shop`** (or your fork).
-3. Framework preset: **Other** (static + Node API). Build/install can stay default (`npm install`).
-4. Under **Environment Variables**, add:
+1. Go to [vercel.com](https://vercel.com) and import **`rishventh-github/flowring.shop`**.
+2. Framework preset: **Other**.
+3. Environment variables:
 
    | Name | Value |
    |------|--------|
@@ -51,27 +37,26 @@ git push -u origin main
    | `SESSION_SECRET` | Long random string |
    | `TURSO_DATABASE_URL` | From Turso |
    | `TURSO_AUTH_TOKEN` | From Turso |
-   | `CONTACT_TO_EMAIL` | Optional. Defaults to `rishenth.ramoshan@gmail.com` (contact form) |
-   | `RESEND_API_KEY` | Optional. More reliable contact emails; otherwise FormSubmit is used |
+   | `CONTACT_TO_EMAIL` | Optional (defaults to `rishenth.ramoshan@gmail.com`) |
+   | `RESEND_API_KEY` | Optional (more reliable contact emails than FormSubmit) |
 
-5. Click **Deploy**. When it finishes, open the `*.vercel.app` URL.
-6. Confirm:
-   - Home page loads
-   - `/api/content` returns JSON
-   - `/admin/login` accepts your `ADMIN_PASSWORD`
-   - Saving in admin shows the persistence toast (data is in Turso)
-
-Schema and default content are created automatically on first API request.
+4. Deploy and confirm the `*.vercel.app` URL works (`/`, `/contact.html`, `/api/content`).
 
 ---
 
-## 4. Use flowring.shop as the domain
+## 3. Point flowring.shop at Vercel (required — leave Render)
 
-1. In **Vercel → Project → Settings → Domains**, add `flowring.shop` and `www.flowring.shop` if you want.
-2. At your DNS provider, add the records Vercel shows (usually **A** / **CNAME**).
-3. Wait for DNS + HTTPS (often a few minutes).
+**Right now `flowring.shop` can still resolve to Render.** The contact form and admin only work reliably on Vercel. Do this cutover:
 
-Your live site will be **https://flowring.shop**.
+1. **Vercel → Project → Settings → Domains** → add `flowring.shop` and `www.flowring.shop`.
+2. Copy the DNS records Vercel shows.
+3. At your domain registrar (Namecheap, Cloudflare, Google Domains, etc.):
+   - **Remove** old Render `A` / `CNAME` records for `@` and `www`.
+   - **Add** Vercel’s records (often apex **A** `76.76.21.21` and `www` **CNAME** to `cname.vercel-dns.com` — use whatever Vercel displays).
+4. In the **Render** dashboard, **Suspend** or **Delete** the old FlowRing web service so it cannot serve the domain again.
+5. Wait for DNS (minutes to a few hours). https://flowring.shop should show `server: Vercel` in response headers (not `x-render-origin-server`).
+
+Until DNS finishes, use your Vercel URL (e.g. `https://flowring-shop.vercel.app`) to test contact/admin.
 
 ---
 
@@ -84,22 +69,10 @@ cp .env.example .env
 npm start
 ```
 
-Without Turso env vars, the app uses **`data/flowring.db`**. To test against the same DB as production, put `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` in `.env`.
-
 ---
 
-## Turning off Render (if you still have it)
+## After deploy
 
-1. In the Render dashboard, **suspend** or **delete** the old web service so it stops competing for DNS.
-2. Point **flowring.shop** DNS to **Vercel** (remove old Render CNAME/A records).
-3. You can delete `render.yaml` from the repo once you no longer need it (optional).
-
----
-
-## Can I still change the website after it’s deployed?
-
-**Yes.**
-
-1. **Code** — Edit, commit, push to `main`. Vercel redeploys automatically.
-2. **Admin content** — Use **https://flowring.shop/admin/login**. Saves go to **Turso** and survive every deploy.
-3. **Domain** — Stay on flowring.shop; only hosting moves to Vercel.
+1. **Code** — push to `main`; Vercel redeploys automatically.
+2. **Admin** — `https://flowring.shop/admin/login` (or your `*.vercel.app` URL).
+3. **Contact form** — submissions are saved in Turso and emailed to `CONTACT_TO_EMAIL` / the default Gmail when email delivery succeeds.
