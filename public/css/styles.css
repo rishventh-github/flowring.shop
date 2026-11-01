@@ -561,6 +561,79 @@ a:hover { color: var(--color-ocean); }
 .section-cta { margin: 0; text-align: center; }
 .section-cta--spaced { margin-top: 3.5rem; padding-top: 2rem; }
 
+/* Accomplishments — alternating left/right scroll reveals */
+.accomplish-list {
+  list-style: none;
+  margin: 2.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 52rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+.accomplish-item.scroll-reveal {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem 1.25rem;
+  align-items: start;
+  max-width: 85%;
+  padding: 1.25rem 1.35rem;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(125, 211, 252, 0.22);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  transition:
+    opacity 0.7s var(--reveal-ease),
+    transform 0.7s var(--reveal-ease);
+}
+.accomplish-item.scroll-reveal.accomplish-item--from-left {
+  align-self: flex-start;
+  transform: translate3d(-56px, 0, 0);
+}
+.accomplish-item.scroll-reveal.accomplish-item--from-right {
+  align-self: flex-end;
+  transform: translate3d(56px, 0, 0);
+}
+.accomplish-item.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+.accomplish-item__marker {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  color: var(--color-mist);
+  line-height: 1.4;
+  padding-top: 0.15rem;
+}
+.accomplish-item__text {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: rgba(248, 250, 252, 0.92);
+}
+.accomplish-item__text strong { color: var(--color-white); font-weight: 700; }
+@media (max-width: 767px) {
+  .accomplish-item.scroll-reveal {
+    max-width: 100%;
+    align-self: stretch !important;
+  }
+  .accomplish-item.scroll-reveal.accomplish-item--from-left { transform: translate3d(-28px, 0, 0); }
+  .accomplish-item.scroll-reveal.accomplish-item--from-right { transform: translate3d(28px, 0, 0); }
+  .accomplish-item.scroll-reveal.is-visible { transform: translate3d(0, 0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .accomplish-item.scroll-reveal {
+    opacity: 1;
+    transform: none !important;
+    transition: none;
+  }
+}
+
 /* Gallery */
 .gallery-grid {
   display: grid;

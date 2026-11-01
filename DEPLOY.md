@@ -46,15 +46,33 @@ You can also create Turso from the [Vercel Marketplace → Turso](https://vercel
 
 ## 3. Point flowring.shop at Vercel (required — leave Render)
 
-**Right now `flowring.shop` can still resolve to Render.** The contact form and admin only work reliably on Vercel. Do this cutover:
+**`flowring.shop` may still resolve to Render.** Contact/admin work reliably on Vercel. Cut over like this:
 
-1. **Vercel → Project → Settings → Domains** → add `flowring.shop` and `www.flowring.shop`.
-2. Copy the DNS records Vercel shows.
-3. At your domain registrar (Namecheap, Cloudflare, Google Domains, etc.):
-   - **Remove** old Render `A` / `CNAME` records for `@` and `www`.
-   - **Add** Vercel’s records (often apex **A** `76.76.21.21` and `www` **CNAME** to `cname.vercel-dns.com` — use whatever Vercel displays).
-4. In the **Render** dashboard, **Suspend** or **Delete** the old FlowRing web service so it cannot serve the domain again.
-5. Wait for DNS (minutes to a few hours). https://flowring.shop should show `server: Vercel` in response headers (not `x-render-origin-server`).
+### A. In Vercel
+1. **Project → Settings → Domains** → add `flowring.shop` and `www.flowring.shop`.
+2. Leave that page open. Vercel shows the **exact** DNS records to create (copy those values).
+
+### B. At your domain registrar (where you bought flowring.shop)
+Open **DNS / Manage DNS / Advanced DNS** for `flowring.shop`.
+
+1. **Remove Render website records** for the site only:
+   - Any **A** / **AAAA** for `@` (or blank / `flowring.shop`) that pointed at the old host
+   - Any **CNAME** for `www` pointing at Render (often `….onrender.com`)
+   - Do **not** delete email **MX** or unrelated **TXT** records unless you know you don’t need them
+2. **Add the Vercel records** from the Domains page. Common pattern (confirm with Vercel’s UI):
+
+   | Type | Host / Name | Value |
+   |------|-------------|--------|
+   | **A** | `@` (or blank) | Vercel’s IP (often `76.76.21.21`) |
+   | **CNAME** | `www` | Vercel’s CNAME target (e.g. `cname.vercel-dns.com` or a `….vercel-dns-….com` value) |
+
+3. Save.
+
+### C. Turn off Render
+In the **Render** dashboard, **Suspend** or **Delete** the old FlowRing web service.
+
+### D. Wait and verify
+DNS can take minutes to a few hours. In Vercel Domains, status should become **Valid**. Then https://flowring.shop should be served by Vercel (not Render).
 
 Until DNS finishes, use your Vercel URL (e.g. `https://flowring-shop.vercel.app`) to test contact/admin.
 
